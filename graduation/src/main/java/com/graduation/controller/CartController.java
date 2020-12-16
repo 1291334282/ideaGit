@@ -1,0 +1,84 @@
+package com.graduation.controller;
+
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.graduation.entity.Cart;
+import com.graduation.entity.ResultUtil;
+import com.graduation.entity.User;
+import com.graduation.enums.CodeEnum;
+import com.graduation.service.CartService;
+import com.graduation.service.UserAddressService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+
+/**
+ * <p>
+ * 前端控制器
+ * </p>
+ *
+ * @author 叼大
+ * @since 2020-12-07
+ */
+@RestController
+@RequestMapping("/cart")
+@Api(tags = "订单管理接口")
+@CrossOrigin
+public class CartController {
+    @Autowired
+    private CartService cartService;
+
+    @ApiOperation("功能：添加订单到购物车接口(备注：需要传入productId货物表的id，price单价，quantity数量)")
+    @PostMapping("/addCart")
+    public ResultUtil add(@RequestParam(value = "productId", required = true) Integer productId, @RequestParam(value = "price", required = true) Float price, @RequestParam(value = "quantity", required = true) Integer quantity, HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        User user = (User) session.getAttribute("user");
+        Cart cart = new Cart();
+        cart.setProductId(productId);
+        cart.setQuantity(quantity);
+        cart.setCost(price * quantity);
+        cart.setUserId(user.getId());
+        try {
+            if (cartService.save(cart)) {
+                return ResultUtil.success(null, CodeEnum.ADD_SUCCESS.msg(), CodeEnum.ADD_SUCCESS.val());
+            }
+        } catch (Exception e) {
+            return ResultUtil.fail(CodeEnum.STOCK_EMPTY.val(), CodeEnum.STOCK_EMPTY.msg());
+        }
+        return ResultUtil.fail(CodeEnum.ADD_FAIL.val(), CodeEnum.ADD_FAIL.msg());
+    }
+
+    @ApiOperation("功能：购物车显示接口")
+    @GetMapping("/findAllCart")
+    public ResultUtil findAllCart(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        User user = (User) session.getAttribute("user");
+        return ResultUtil.success(cartService.findAllCartVOByUserId(user.getId()));
+    }
+
+    @ApiOperation("功能：删除购物车内容(备注：需要传入购物车内订单对应的id)")
+    @PostMapping("/deleteCartById")
+    public ResultUtil deleteById(@RequestParam(value = "id", required = true) Integer id) {
+        cartService.removeById(id);
+        return ResultUtil.success(null, CodeEnum.DELETE_SUCCESS.msg(), CodeEnum.DELETE_SUCCESS.val());
+    }
+
+    @ApiOperation("功能：动态更新购物车数据，和确认订单时再更新一次(备注：需要传入购物车内订单对应的id，quantity数量，cost单条订单总花费)")
+    @PostMapping("/updateCartById")
+    public ResultUtil updateCart(@RequestParam(value = "id", required = true) Integer id, @RequestParam(value = "quantity", required = true) Integer quantity, @RequestParam(value = "cost", required = true) Float cost) {
+        Cart cart = cartService.getById(id);
+        cart.setQuantity(quantity);
+        cart.setCost(cost);
+        if (cartService.updateById(cart)) {
+            return ResultUtil.success(null, CodeEnum.UPDATE_SUCCESS.msg(), CodeEnum.UPDATE_SUCCESS.val());
+        } else {
+            return ResultUtil.fail(CodeEnum.UPDATE_FAIL.val(), CodeEnum.UPDATE_FAIL.msg());
+        }
+    }
+}
+
