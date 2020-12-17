@@ -35,6 +35,7 @@ public enum CodeEnum {
     DELETE_FAIL("513", "删除失败"),
     UPLOAD_FAIL("514", "上传失败"),
     FILE_EMPTY("515", "空文件"),
+    PRODUCT_IS_EXISTS("516", "商品已存在购物车里，请去购物车调整")
     ;
 
     CodeEnum(String value, String msg) {

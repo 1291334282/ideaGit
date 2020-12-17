@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 
 /**
@@ -44,6 +45,12 @@ public class CartController {
     public ResultUtil add(@RequestParam(value = "productId", required = true) Integer productId, @RequestParam(value = "price", required = true) Float price, @RequestParam(value = "quantity", required = true) Integer quantity, HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         User user = (User) session.getAttribute("user");
+        List<Cart> list = cartService.list(
+                new QueryWrapper<Cart>()
+                        .eq("product_id", productId)
+                        .eq("user_id", user.getId()));
+        if (!list.isEmpty())
+            return ResultUtil.fail(CodeEnum.PRODUCT_IS_EXISTS.val(), CodeEnum.PRODUCT_IS_EXISTS.msg());
         Cart cart = new Cart();
         cart.setProductId(productId);
         cart.setQuantity(quantity);
