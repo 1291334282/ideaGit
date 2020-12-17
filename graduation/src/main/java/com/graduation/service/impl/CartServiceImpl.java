@@ -5,6 +5,7 @@ import com.graduation.entity.Cart;
 import com.graduation.entity.Product;
 import com.graduation.enums.CodeEnum;
 import com.graduation.exception.MallException;
+import com.graduation.handler.StockHandler;
 import com.graduation.mapper.CartMapper;
 import com.graduation.mapper.ProductMapper;
 import com.graduation.service.CartService;
@@ -27,7 +28,7 @@ import java.util.List;
  * @since 2020-12-07
  */
 @Service
-@Slf4j
+
 public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements CartService {
     @Autowired
     private CartMapper cartMapper;
@@ -39,10 +40,7 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements Ca
         //扣库存
         Product product = productMapper.selectById(entity.getProductId());
         Integer stock = product.getStock() - entity.getQuantity();
-        if (stock < 0) {
-            log.error("【添加购物车】库存不足！stock={}", stock);
-            throw new MallException(CodeEnum.STOCK_EMPTY);
-        }
+        StockHandler.Stock(stock);
         product.setStock(stock);
         productMapper.updateById(product);
         if (cartMapper.insert(entity) == 1) {

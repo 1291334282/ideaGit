@@ -3,10 +3,14 @@ package com.graduation.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.graduation.entity.Cart;
+import com.graduation.entity.Product;
 import com.graduation.entity.ResultUtil;
 import com.graduation.entity.User;
 import com.graduation.enums.CodeEnum;
+import com.graduation.exception.MallException;
+import com.graduation.handler.StockHandler;
 import com.graduation.service.CartService;
+import com.graduation.service.ProductService;
 import com.graduation.service.UserAddressService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -32,6 +36,8 @@ import javax.servlet.http.HttpSession;
 public class CartController {
     @Autowired
     private CartService cartService;
+    @Autowired
+    private ProductService productService;
 
     @ApiOperation("功能：添加订单到购物车接口(备注：需要传入productId货物表的id，price单价，quantity数量)")
     @PostMapping("/addCart")
@@ -72,13 +78,24 @@ public class CartController {
     @PostMapping("/updateCartById")
     public ResultUtil updateCart(@RequestParam(value = "id", required = true) Integer id, @RequestParam(value = "quantity", required = true) Integer quantity, @RequestParam(value = "cost", required = true) Float cost) {
         Cart cart = cartService.getById(id);
-        cart.setQuantity(quantity);
-        cart.setCost(cost);
-        if (cartService.updateById(cart)) {
-            return ResultUtil.success(null, CodeEnum.UPDATE_SUCCESS.msg(), CodeEnum.UPDATE_SUCCESS.val());
-        } else {
-            return ResultUtil.fail(CodeEnum.UPDATE_FAIL.val(), CodeEnum.UPDATE_FAIL.msg());
+        Product product = productService.getById(cart.getProductId());
+        try {
+            if (quantity != cart.getQuantity()) {
+                int i = product.getStock() - (quantity - cart.getQuantity());
+                product.setStock(i);
+                StockHandler.Stock(i);
+                productService.updateById(product);
+            }
+            cart.setQuantity(quantity);
+            cart.setCost(cost);
+            if (cartService.updateById(cart)) {
+                return ResultUtil.success(null, CodeEnum.UPDATE_SUCCESS.msg(), CodeEnum.UPDATE_SUCCESS.val());
+            }
+        } catch (Exception e) {
+            return ResultUtil.fail(CodeEnum.STOCK_EMPTY.val(), CodeEnum.STOCK_EMPTY.msg());
         }
+        return ResultUtil.fail(CodeEnum.UPDATE_FAIL.val(), CodeEnum.UPDATE_FAIL.msg());
+
     }
 }
 
