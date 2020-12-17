@@ -11,7 +11,7 @@
  Target Server Version : 50623
  File Encoding         : 65001
 
- Date: 16/12/2020 23:32:13
+ Date: 17/12/2020 15:19:27
 */
 
 SET NAMES utf8mb4;
@@ -34,12 +34,7 @@ CREATE TABLE `cart`  (
   INDEX `userId`(`user_id`) USING BTREE,
   CONSTRAINT `cart_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `product` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `cart_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 186 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
-
--- ----------------------------
--- Records of cart
--- ----------------------------
-INSERT INTO `cart` VALUES (185, 1, 16, 1280, 2, '2020-12-16 15:30:55', '2020-12-16 15:30:55');
+) ENGINE = InnoDB AUTO_INCREMENT = 190 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Table structure for order_detail
@@ -53,7 +48,7 @@ CREATE TABLE `order_detail`  (
   `cost` float NOT NULL COMMENT '消费',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `PK__EASYBUY___66E1BD8E2F10007B`(`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 105 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 106 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Table structure for orders
@@ -70,7 +65,7 @@ CREATE TABLE `orders`  (
   `update_time` datetime(0) NOT NULL COMMENT '更新时间',
   `status` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '订单状态',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 133 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 134 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Table structure for product
@@ -92,7 +87,7 @@ CREATE TABLE `product`  (
 -- ----------------------------
 -- Records of product
 -- ----------------------------
-INSERT INTO `product` VALUES (1, '高等数学同济大学第七版上下册教材课本', '大一高数学习指导考研', 80, 20, 1, 5, 'math.png');
+INSERT INTO `product` VALUES (1, '高等数学同济大学第七版上下册教材课本', '大一高数学习指导考研', 80, 19, 1, 5, 'math.png');
 INSERT INTO `product` VALUES (2, '零基础C++从入门到精通', '计算机程序开发数据结构基础教程书籍', 59, 46, 1, 5, 'c.png');
 INSERT INTO `product` VALUES (3, '全新版大学英语第二版', '英语课本教材配套学习手册', 13, 46, 1, 6, 'English.png');
 INSERT INTO `product` VALUES (4, '计算机网络 谢希仁 第七版', '指定计算机教材', 40, 50, 1, 6, 'Interney.png');
@@ -165,17 +160,18 @@ CREATE TABLE `user`  (
   `update_time` datetime(0) NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `PK__EASYBUY___C96109CC3A81B327`(`login_name`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 33 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 35 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of user
 -- ----------------------------
-INSERT INTO `user` VALUES (2, 'admin', '系统管理员', '123', 0, '130406198302141869', 'hello11@bdqn.com', '1583233515', '7.jpg', '2020-05-18 06:22:27', '2020-05-18 06:22:32');
-INSERT INTO `user` VALUES (10, 'cgn', '程广宁', '123', 1, '140225189987854589', '1044732267@qq.com', '13366055011', '2.jpg', '2020-05-18 06:22:34', '2020-05-18 06:22:37');
-INSERT INTO `user` VALUES (11, 'hyl', '忽悠了', '123', 0, '12312', '12312', '1231', '9.jpg', '2020-05-18 06:22:35', '2020-12-15 08:17:59');
-INSERT INTO `user` VALUES (12, 'ck', '陈康', '123', 1, '140225189987854589', '1044732267@qq.com', '13366055010', '4.jpg', '2020-05-17 22:22:36', '2020-12-16 04:25:46');
-INSERT INTO `user` VALUES (31, 'ff', '丰富', '123', 1, '1231', '1231', '12311', '10.jpg', '2020-12-14 05:51:19', '2020-12-16 15:13:01');
-INSERT INTO `user` VALUES (32, 'gf', '规范', '123', 0, '440623141241', '12913362@qq.com', '123123123', NULL, '2020-12-16 15:26:55', '2020-12-16 15:26:55');
+INSERT INTO `user` VALUES (2, 'admin', '系统管理员', 'c41d7c66e1b8404545aa3a0ece2006ac', 0, '130406198302141869', 'hello11@bdqn.com', '1583233515', '7.jpg', '2020-05-18 06:22:27', '2020-05-18 06:22:32');
+INSERT INTO `user` VALUES (10, 'cgn', '程广宁', '3c5f1113a4d6e401590e77e6d756e706', 1, '140225189987854589', '1044732267@qq.com', '13366055011', '2.jpg', '2020-05-18 06:22:34', '2020-05-18 06:22:37');
+INSERT INTO `user` VALUES (11, 'hyl', '忽悠了', '1fb1b8845efe4ff5b5b47fe305b6f053', 0, '12312', '12312', '1231', '9.jpg', '2020-05-18 06:22:35', '2020-12-15 08:17:59');
+INSERT INTO `user` VALUES (12, 'ck', '陈康', '6137d7637479b002b1934bda66b78717', 1, '140225189987854589', '1044732267@qq.com', '13366055010', '4.jpg', '2020-05-17 22:22:36', '2020-12-16 04:25:46');
+INSERT INTO `user` VALUES (31, 'ff', '丰富', 'b480cccdf4d0d9e87b34c2dcbdc8cb1c', 1, '1231', '1231', '12311', '10.jpg', '2020-12-14 05:51:19', '2020-12-16 15:13:01');
+INSERT INTO `user` VALUES (32, 'gf', '规范', 'b938aa4bfb13203541abc0aaa24e96a1', 0, '440623141241', '12913362@qq.com', '123123123', NULL, '2020-12-16 15:26:55', '2020-12-16 15:26:55');
+INSERT INTO `user` VALUES (34, 'gfs', '官方是', 'e1def38c3090f65201083a5f072b4683', 0, '1231', '12121', '1231231', NULL, '2020-12-17 07:04:30', '2020-12-17 07:12:08');
 
 -- ----------------------------
 -- Table structure for user_address
@@ -194,6 +190,6 @@ CREATE TABLE `user_address`  (
 -- ----------------------------
 -- Records of user_address
 -- ----------------------------
-INSERT INTO `user_address` VALUES (49, 31, '谢边村', '2', '2020-12-16 15:21:49', '2020-12-16 15:22:44');
+INSERT INTO `user_address` VALUES (49, 12, '谢边村', '2', '2020-12-16 15:21:49', '2020-12-16 15:22:44');
 
 SET FOREIGN_KEY_CHECKS = 1;
