@@ -9,6 +9,7 @@ import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashSet;
@@ -62,6 +63,7 @@ public class CustomRealm extends AuthorizingRealm {
         QueryWrapper queryWrapper = new QueryWrapper();
         queryWrapper.eq("login_name", loginName);
         User user = userService.getOne(queryWrapper);
+        ByteSource salt = ByteSource.Util.bytes(loginName);
         //3.判断用户是否存在或者密码是否一致
         if (user == null) {
             //4.不一致，返回null（抛出异常）
@@ -69,7 +71,7 @@ public class CustomRealm extends AuthorizingRealm {
         }
         //5.如果一致返回安全数据
         //构造方法：安全数据，密码，realm域名
-        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(user, user.getPassword(), this.getName());
+        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(user, user.getPassword(),salt, this.getName());
         return info;
     }
 

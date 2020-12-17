@@ -3,10 +3,12 @@ package com.graduation.config;
 
 
 import com.graduation.realm.CustomRealm;
+import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -15,11 +17,26 @@ import java.util.Map;
 
 @Configuration
 public class ShiroConfiguration {
-
+    /**
+     * 密码匹配凭证管理器
+     *
+     * @return
+     */
+    @Bean(name = "hashedCredentialsMatcher")
+    public HashedCredentialsMatcher hashedCredentialsMatcher() {
+        HashedCredentialsMatcher hashedCredentialsMatcher = new HashedCredentialsMatcher();
+        // 采用MD5方式加密
+        hashedCredentialsMatcher.setHashAlgorithmName("MD5");
+        // 设置加密次数
+        hashedCredentialsMatcher.setHashIterations(1024);
+        return hashedCredentialsMatcher;
+    }
     //1.创建realm
     @Bean
-    public CustomRealm getRealm() {
-        return new CustomRealm();
+    public CustomRealm getRealm(@Qualifier("hashedCredentialsMatcher") HashedCredentialsMatcher matcher) {
+        CustomRealm customRealm=new CustomRealm();
+        customRealm.setCredentialsMatcher(matcher);
+        return customRealm;
     }
 
     //2.创建安全管理器

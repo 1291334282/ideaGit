@@ -15,7 +15,9 @@ import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.crypto.hash.Md5Hash;
+import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ResourceUtils;
@@ -49,18 +51,6 @@ public class UserController {
     public ResultUtil login(@RequestParam(value = "loginName", required = true)String loginName,@RequestParam(value = "password", required = true) String password, HttpServletRequest request) {
         //构造登录令牌
         try {
-            /**
-             * 密码加密：
-             *     shiro提供的md5加密
-             *     Md5Hash:
-             *      参数一：加密的内容
-             *              111111   --- abcd
-             *      参数二：盐（加密的混淆字符串）（用户登录的用户名）
-             *              111111+混淆字符串
-             *      参数三：加密次数
-             *
-             */
-//            password = new Md5Hash(password,"123456",3).toString();
             UsernamePasswordToken upToken = new UsernamePasswordToken(loginName, password);
             //1.获取subject
             Subject subject = SecurityUtils.getSubject();
@@ -90,6 +80,19 @@ public class UserController {
     @ApiOperation("功能：注册(备注：id,createTime,updateTime为自动生成,不用输入)")
     @PostMapping("/register")
     public ResultUtil register(User user) {
+        // 将用户名作为盐值
+        ByteSource salt = ByteSource.Util.bytes(user.getLoginName());
+        /*
+         * MD5加密：
+         * 使用SimpleHash类对原始密码进行加密。
+         * 第一个参数代表使用MD5方式加密
+         * 第二个参数为原始密码
+         * 第三个参数为盐值，即用户名
+         * 第四个参数为加密次数
+         * 最后用toHex()方法将加密后的密码转成String
+         * */
+        String newPs = new SimpleHash("MD5", user.getPassword(), salt, 1024).toHex();
+        user.setPassword(newPs);
         boolean result = false;
         try {
             result = userService.save(user);
@@ -113,6 +116,25 @@ public class UserController {
     public ResultUtil updateuser(HttpServletRequest request, User user2) {
         HttpSession session = request.getSession(false);
         User user = (User) session.getAttribute("user");
+        if (user2.getPassword()!=null){
+            // 将用户名作为盐值
+            ByteSource salt = ByteSource.Util.bytes(user.getLoginName());
+            /*
+             * MD5加密：
+             * 使用SimpleHash类对原始密码进行加密。
+             * 第一个参数代表使用MD5方式加密
+             * 第二个参数为原始密码
+             * 第三个参数为盐值，即用户名
+             * 第四个参数为加密次数
+             * 最后用toHex()方法将加密后的密码转成String
+             * */
+            String newPs = new SimpleHash("MD5", user2.getPassword(), salt, 1024).toHex();
+            user2.setPassword(newPs);
+            user2.setId(user.getId());
+            if (userService.updateById(user2))
+                return ResultUtil.success(null, CodeEnum.UPDATE_SUCCESS.msg(), CodeEnum.UPDATE_SUCCESS.val());
+            return ResultUtil.fail(CodeEnum.UPDATE_FAIL.val(), CodeEnum.UPDATE_FAIL.msg());
+        }
         user2.setId(user.getId());
         if (userService.updateById(user2))
             return ResultUtil.success(null, CodeEnum.UPDATE_SUCCESS.msg(), CodeEnum.UPDATE_SUCCESS.val());
