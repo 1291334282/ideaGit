@@ -56,12 +56,14 @@ public class UserController {
             Subject subject = SecurityUtils.getSubject();
             //2.调用subject进行登录
             subject.login(upToken);
+            //把用户信息全存到session
             QueryWrapper queryWrapper = new QueryWrapper();
             queryWrapper.eq("login_name", loginName);
             User user = userService.getOne(queryWrapper);
             HttpSession session = request.getSession();
             session.setAttribute("user", user);
-            return ResultUtil.success(upToken, CodeEnum.LOGIN_SUCCESS.msg(), CodeEnum.LOGIN_SUCCESS.val());
+            //只返回登录名
+            return ResultUtil.success(loginName, CodeEnum.LOGIN_SUCCESS.msg(), CodeEnum.LOGIN_SUCCESS.val());
         } catch (UnknownAccountException e) {
             return ResultUtil.fail(CodeEnum.USER_NOT_EXIST.val(), CodeEnum.USER_NOT_EXIST.msg());
         } catch (IncorrectCredentialsException e) {
