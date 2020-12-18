@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.servlet.Filter;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -66,6 +67,9 @@ public class ShiroConfiguration {
         //3.通用配置（跳转登录页面，为授权跳转的页面）
         filterFactory.setLoginUrl("/user/nologin");//跳转url地址
         filterFactory.setUnauthorizedUrl("/user/noauth");//未授权的url
+//        Map<String, Filter> filters = new LinkedHashMap<>();
+//        filters.put("authc", new StatelessAuthcFilter());
+//        filterFactory.setFilters(filters);
         //4.设置过滤器集合
         /**
          * 设置所有的过滤器：有顺序map
@@ -84,19 +88,19 @@ public class ShiroConfiguration {
         filterMap.put("/favicon.ico","anon");
         filterMap.put("/captcha.jpg","anon");
         filterMap.put("/csrf","anon");
-        filterMap.put("/user/findUserOne","authc");
-        filterMap.put("/user/loginout","authc");
-        filterMap.put("/user/updateUser","authc");
-        filterMap.put("/user/upload","authc");
+//        filterMap.put("/user/findUserOne","authc");
+//        filterMap.put("/user/loginout","authc");
+//        filterMap.put("/user/updateUser","authc");
+//        filterMap.put("/user/upload","authc");
         filterMap.put("/user/**","anon");
         filterMap.put("/productCategory/**","anon");
         filterMap.put("/product/**","anon");
         //当前请求地址必须认证之后可以访问
-        filterMap.put("/order/**","authc");
-        filterMap.put("/cart/**","authc");
-        filterMap.put("/static/**", "anon");
-        filterMap.put("/userAddress/**","authc");
-        filterMap.put("/admin/**","roles[admin]");
+//        filterMap.put("/order/**","authc");
+//        filterMap.put("/cart/**","authc");
+//        filterMap.put("/static/**", "anon");
+//        filterMap.put("/userAddress/**","authc");
+//        filterMap.put("/admin/**","roles[admin]");
         filterFactory.setFilterChainDefinitionMap(filterMap);
         return filterFactory;
     }

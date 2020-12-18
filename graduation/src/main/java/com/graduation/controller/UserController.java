@@ -61,7 +61,7 @@ public class UserController {
             User user = userService.getOne(queryWrapper);
             HttpSession session = request.getSession();
             session.setAttribute("user", user);
-            return ResultUtil.success(loginName, CodeEnum.LOGIN_SUCCESS.msg(), CodeEnum.LOGIN_SUCCESS.val());
+            return ResultUtil.success(upToken, CodeEnum.LOGIN_SUCCESS.msg(), CodeEnum.LOGIN_SUCCESS.val());
         } catch (UnknownAccountException e) {
             return ResultUtil.fail(CodeEnum.USER_NOT_EXIST.val(), CodeEnum.USER_NOT_EXIST.msg());
         } catch (IncorrectCredentialsException e) {
