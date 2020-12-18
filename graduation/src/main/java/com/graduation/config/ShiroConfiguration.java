@@ -88,19 +88,19 @@ public class ShiroConfiguration {
         filterMap.put("/favicon.ico","anon");
         filterMap.put("/captcha.jpg","anon");
         filterMap.put("/csrf","anon");
-//        filterMap.put("/user/findUserOne","authc");
-//        filterMap.put("/user/loginout","authc");
-//        filterMap.put("/user/updateUser","authc");
-//        filterMap.put("/user/upload","authc");
+        filterMap.put("/user/findUserOne","authc");
+        filterMap.put("/user/loginout","authc");
+        filterMap.put("/user/updateUser","authc");
+        filterMap.put("/user/upload","authc");
         filterMap.put("/user/**","anon");
         filterMap.put("/productCategory/**","anon");
         filterMap.put("/product/**","anon");
         //当前请求地址必须认证之后可以访问
-//        filterMap.put("/order/**","authc");
-//        filterMap.put("/cart/**","authc");
-//        filterMap.put("/static/**", "anon");
-//        filterMap.put("/userAddress/**","authc");
-//        filterMap.put("/admin/**","roles[admin]");
+        filterMap.put("/order/**","authc");
+        filterMap.put("/cart/**","authc");
+        filterMap.put("/static/**", "anon");
+        filterMap.put("/userAddress/**","authc");
+        filterMap.put("/admin/**","roles[admin]");
         filterFactory.setFilterChainDefinitionMap(filterMap);
         return filterFactory;
     }
