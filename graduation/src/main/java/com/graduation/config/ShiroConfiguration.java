@@ -1,8 +1,6 @@
 package com.graduation.config;
 
 
-
-
 import com.graduation.auth.AuthFilter;
 import com.graduation.auth.AuthRealm;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
@@ -52,8 +50,8 @@ public class ShiroConfiguration {
         filterMap.put("/user/register", "anon");
         filterMap.put("/static/**", "anon");
         filterMap.put("/img/**", "anon");
-        filterMap.put("/productCategory/*","anon");
-        filterMap.put("/product/*","anon");
+        filterMap.put("/productCategory/*", "anon");
+        filterMap.put("/product/*", "anon");
         filterMap.put("/swagger/**", "anon");
         filterMap.put("/v2/api-docs", "anon");
         filterMap.put("/swagger-ui.html", "anon");
@@ -70,7 +68,6 @@ public class ShiroConfiguration {
     public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
         return new LifecycleBeanPostProcessor();
     }
-
 
     @Bean
     public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(SecurityManager securityManager) {

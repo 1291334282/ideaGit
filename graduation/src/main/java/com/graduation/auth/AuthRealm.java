@@ -6,6 +6,7 @@ import com.graduation.entity.User;
 import com.graduation.service.UserService;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
+import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,20 +35,20 @@ public class AuthRealm extends AuthorizingRealm {
      */
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         //1. 从 PrincipalCollection 中来获取登录用户的信息
-//        User user = (User) principals.getPrimaryPrincipal();
-//        //Integer userId = user.getUserId();
-//        //2.添加角色和权限
-//        SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
+        User user = (User) principals.getPrimaryPrincipal();
+        //Integer userId = user.getUserId();
+        //2.添加角色和权限
+        SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
 //        for (Role role : user.getRoles()) {
 //            //2.1添加角色
-//            simpleAuthorizationInfo.addRole(role.getRoleName());
+            simpleAuthorizationInfo.addRole(user.getLoginName());
 //            for (Permission permission : role.getPermissions()) {
 //                //2.1.1添加权限
 //                simpleAuthorizationInfo.addStringPermission(permission.getPermission());
 //            }
 //        }
-//        return simpleAuthorizationInfo;
-        return null;
+        return simpleAuthorizationInfo;
+//        return null;
     }
 
     @Override

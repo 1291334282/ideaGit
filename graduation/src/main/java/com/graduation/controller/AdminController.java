@@ -8,6 +8,7 @@ import com.graduation.service.ProductService;
 import com.graduation.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,23 +35,32 @@ public class AdminController {
     @Autowired
     private ProductService productService;
 
+    @RequiresRoles({"admin"})
     @ApiOperation("功能：删除个人信息(备注：管理员使用，需要传入user的id)")
-    @PostMapping("/deleteUserById")
-    public ResultUtil deleteuser(@RequestParam(value = "id", required = true) Integer id) {
+    @DeleteMapping("/deleteUserById")
+    public ResultUtil deleteuser(@RequestParam(value = "id", required = true) Integer id, @RequestHeader("token") String token) {
+        if (!userService.findByToken(token).getUserId().equals(1))
+            return ResultUtil.fail(CodeEnum.NO_AUTH.val(), CodeEnum.NO_AUTH.msg());
         if (userService.removeById(id))
             return ResultUtil.success(null, CodeEnum.DELETE_SUCCESS.msg(), CodeEnum.DELETE_SUCCESS.val());
         return ResultUtil.fail(CodeEnum.DELETE_FAIL.val(), CodeEnum.DELETE_FAIL.msg());
     }
 
+    @RequiresRoles({"admin"})
     @ApiOperation("功能：查找全部个人信息(备注：管理员使用)")
     @GetMapping("/findAllUser")
-    public ResultUtil selectuser() {
+    public ResultUtil selectuser(@RequestHeader("token") String token) {
+        if (!userService.findByToken(token).getUserId().equals(1))
+            return ResultUtil.fail(CodeEnum.NO_AUTH.val(), CodeEnum.NO_AUTH.msg());
         return ResultUtil.success(userService.selectuser());
     }
 
+    @RequiresRoles({"admin"})
     @ApiOperation("功能：修改订单状态,把未发货改成已发货(备注：管理员使用，需要传入orders的id")
-    @PostMapping("/updateOrdersStatus")
-    public ResultUtil updateAddress(@RequestParam(value = "id", required = true) Integer id) {
+    @PutMapping("/updateOrdersStatus")
+    public ResultUtil updateAddress(@RequestParam(value = "id", required = true) Integer id, @RequestHeader("token") String token) {
+        if (!userService.findByToken(token).getUserId().equals(1))
+            return ResultUtil.fail(CodeEnum.NO_AUTH.val(), CodeEnum.NO_AUTH.msg());
         Orders orders = new Orders();
         orders.setId(id);
         orders.setStatus("已发货");
@@ -59,15 +69,20 @@ public class AdminController {
         return ResultUtil.fail(CodeEnum.UPDATE_FAIL.val(), CodeEnum.UPDATE_FAIL.msg());
     }
 
+    @RequiresRoles({"admin"})
     @ApiOperation("功能：查找全部订单(备注：管理员使用)")
     @GetMapping("/findAllOrders")
-    public ResultUtil selectorder() {
+    public ResultUtil selectorder(@RequestHeader("token") String token) {
+        if (!userService.findByToken(token).getUserId().equals(1))
+            return ResultUtil.fail(CodeEnum.NO_AUTH.val(), CodeEnum.NO_AUTH.msg());
         return ResultUtil.success(orderService.selectorder());
     }
 
     @ApiOperation("功能：上架商品(备注：管理员使用,name,price,stcok,categoryleveloneId,categoryleveltwoId为必填项,图片必须上传，fileName不用填)")
     @PostMapping("/addProduct")
-    public ResultUtil addProduct(Product product, @RequestParam("file") MultipartFile file) {
+    public ResultUtil addProduct(Product product, @RequestParam("file") MultipartFile file, @RequestHeader("token") String token) {
+        if (!userService.findByToken(token).getUserId().equals(1))
+            return ResultUtil.fail(CodeEnum.NO_AUTH.val(), CodeEnum.NO_AUTH.msg());
         String fileName = file.getOriginalFilename();//获取文件名
         String filepath = FileUtil.getUploadPath();
         if (!file.isEmpty()) {
@@ -88,17 +103,23 @@ public class AdminController {
         }
     }
 
+    @RequiresRoles({"admin"})
     @ApiOperation("功能：下架商品(备注：管理员使用，需要传入product的id)")
-    @PostMapping("/deleteProductById")
-    public ResultUtil deleteProduct(@RequestParam(value = "id", required = true) Integer id) {
+    @DeleteMapping("/deleteProductById")
+    public ResultUtil deleteProduct(@RequestParam(value = "id", required = true) Integer id, @RequestHeader("token") String token) {
+        if (!userService.findByToken(token).getUserId().equals(1))
+            return ResultUtil.fail(CodeEnum.NO_AUTH.val(), CodeEnum.NO_AUTH.msg());
         if (productService.removeById(id))
             return ResultUtil.success(null, CodeEnum.DELETE_SUCCESS.msg(), CodeEnum.DELETE_SUCCESS.val());
         return ResultUtil.fail(CodeEnum.DELETE_FAIL.val(), CodeEnum.DELETE_FAIL.msg());
     }
 
+    @RequiresRoles({"admin"})
     @ApiOperation("功能：修改商品信息(备注：管理员使用，需要传入product的id,选择性传入其他信息")
-    @PostMapping("/updateProduct")
-    public ResultUtil updateAddress(Product product, MultipartFile file) {
+    @PutMapping("/updateProduct")
+    public ResultUtil updateAddress(Product product, MultipartFile file, @RequestHeader("token") String token) {
+        if (!userService.findByToken(token).getUserId().equals(1))
+            return ResultUtil.fail(CodeEnum.NO_AUTH.val(), CodeEnum.NO_AUTH.msg());
         if (file == null) {
             productService.updateById(product);
             return ResultUtil.success(null, CodeEnum.UPDATE_SUCCESS.msg(), CodeEnum.UPDATE_SUCCESS.val());
@@ -118,7 +139,7 @@ public class AdminController {
             } catch (IOException e) {
                 return ResultUtil.fail(CodeEnum.UPDATE_FAIL.val(), CodeEnum.UPDATE_FAIL.msg());
             }
-        }else {
+        } else {
             return ResultUtil.fail(CodeEnum.FILE_EMPTY.val(), CodeEnum.FILE_EMPTY.msg());
         }
 
