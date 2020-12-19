@@ -8,6 +8,7 @@ import com.graduation.entity.User;
 import com.graduation.enums.CodeEnum;
 import com.graduation.service.CartService;
 import com.graduation.service.OrderService;
+import com.graduation.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,12 +38,13 @@ public class OrderController {
     private OrderService orderService;
     @Autowired
     private CartService cartService;
+    @Autowired
+    private UserService userService;
 
-    @ApiOperation("功能：点击订单确认后添加到orders里(备注：需要传入总金额cost,用户地址userAddress)")
+    @ApiOperation("功能：点击订单确认后添加到orders里(备注：需要传入总金额cost,用户地址userAddress,token)")
     @PostMapping("/addOrder")
-    public ResultUtil settlement3(Orders orders, HttpServletRequest request) {
-        HttpSession session=request.getSession(false);
-        User user = (User) session.getAttribute("user");
+    public ResultUtil settlement3(Orders orders, @RequestHeader("token") String token) {
+        User user = userService.getById(userService.findByToken(token).getUserId());
         orders.setUserId(user.getId());
         orders.setLoginName(user.getLoginName());
         orders.setStatus("未发货");
@@ -61,13 +63,11 @@ public class OrderController {
         return ResultUtil.success(orders,CodeEnum.ADD_SUCCESS.msg(),CodeEnum.ADD_SUCCESS.val());
     }
 
-    @ApiOperation("功能：查找对应登录人的全部订单")
+    @ApiOperation("功能：查找对应登录人的全部订单,备注（需要传入token）")
     @GetMapping("/findOrders")
-    public ResultUtil selectorder(HttpServletRequest request) {
-        HttpSession session=request.getSession(false);
-        User user = (User) session.getAttribute("user");
+    public ResultUtil selectorder(@RequestHeader("token") String token) {
         QueryWrapper wrapper = new QueryWrapper();
-        wrapper.eq("user_id",user.getId());
+        wrapper.eq("user_id",userService.findByToken(token).getUserId());
         return ResultUtil.success(orderService.getMap(wrapper));
     }
 }

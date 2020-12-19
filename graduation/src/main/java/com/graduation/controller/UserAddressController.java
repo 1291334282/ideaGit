@@ -7,6 +7,7 @@ import com.graduation.entity.User;
 import com.graduation.entity.UserAddress;
 import com.graduation.enums.CodeEnum;
 import com.graduation.service.UserAddressService;
+import com.graduation.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,30 +33,29 @@ import javax.servlet.http.HttpSession;
 public class UserAddressController {
     @Autowired
     private UserAddressService userAddressService;
+    @Autowired
+    private UserService userService;
 
-    @ApiOperation("功能：地址信息显示接口")
+    @ApiOperation("功能：地址信息显示接口,备注（需要传入token）")
     @GetMapping("/findAllAddress")
-    public ResultUtil settlement2(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        User user = (User) session.getAttribute("user");
+    public ResultUtil settlement2(@RequestHeader("token") String token) {
         QueryWrapper wrapper = new QueryWrapper();
-        wrapper.eq("user_id", user.getId());
+        wrapper.eq("user_id", userService.findByToken(token).getUserId());
         return ResultUtil.success(userAddressService.list(wrapper));
     }
 
-    @ApiOperation("功能：删除地址(备注：需要传入address的id)")
-    @PostMapping("/deleteAddressById")
-    public ResultUtil deleteAddress(@RequestParam(value = "id", required = true)Integer id) {
+    @ApiOperation("功能：删除地址(备注：需要传入address的id和token)")
+    @DeleteMapping("/deleteAddressById")
+    public ResultUtil deleteAddress(@RequestParam(value = "id", required = true) Integer id,@RequestHeader("token") String token) {
         if (userAddressService.removeById(id))
             return ResultUtil.success(null, CodeEnum.DELETE_SUCCESS.msg(), CodeEnum.DELETE_SUCCESS.val());
         return ResultUtil.fail(CodeEnum.DELETE_FAIL.val(), CodeEnum.DELETE_FAIL.msg());
     }
 
-    @ApiOperation("功能：修改一条地址(备注：需要传入address的id,userId和更新时间和创建时间不用填，其他选择性填)")
-    @PostMapping("/updateAddress")
-    public ResultUtil updateAddress(UserAddress userAddress,HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        User user = (User) session.getAttribute("user");
+    @ApiOperation("功能：修改一条地址(备注：需要传入address的id和token,userId和更新时间和创建时间不用填，其他选择性填)")
+    @PutMapping("/updateAddress")
+    public ResultUtil updateAddress(UserAddress userAddress, @RequestHeader("token") String token) {
+        User user = userService.getById(userService.findByToken(token).getUserId());
         userAddress.setUserId(user.getId());
         if (userAddressService.updateById(userAddress))
             return ResultUtil.success(null, CodeEnum.UPDATE_SUCCESS.msg(), CodeEnum.UPDATE_SUCCESS.val());
@@ -64,10 +64,8 @@ public class UserAddressController {
 
     @ApiOperation("功能：添加一条地址(备注：id和userId和更新时间和创建时间不用填，其他都要填)")
     @PostMapping("/addAddress")
-    public ResultUtil addAddress(UserAddress userAddress,HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        User user = (User) session.getAttribute("user");
-        userAddress.setUserId(user.getId());
+    public ResultUtil addAddress(UserAddress userAddress, @RequestHeader("token") String token) {
+        userAddress.setUserId(userService.findByToken(token).getUserId());
         if (userAddressService.save(userAddress))
             return ResultUtil.success(null, CodeEnum.ADD_SUCCESS.msg(), CodeEnum.ADD_SUCCESS.val());
         return ResultUtil.fail(CodeEnum.ADD_FAIL.val(), CodeEnum.ADD_FAIL.msg());

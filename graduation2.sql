@@ -11,7 +11,7 @@
  Target Server Version : 50623
  File Encoding         : 65001
 
- Date: 17/12/2020 15:19:27
+ Date: 19/12/2020 15:42:30
 */
 
 SET NAMES utf8mb4;
@@ -143,6 +143,18 @@ INSERT INTO `product_category` VALUES (15, '纸张', 4, 2);
 INSERT INTO `product_category` VALUES (16, '文具', 4, 2);
 
 -- ----------------------------
+-- Table structure for sys_token
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_token`;
+CREATE TABLE `sys_token`  (
+  `user_id` int(11) NOT NULL,
+  `expire_time` datetime(0) NULL DEFAULT NULL,
+  `token` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `update_time` datetime(0) NULL DEFAULT NULL,
+  PRIMARY KEY (`user_id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+
+-- ----------------------------
 -- Table structure for user
 -- ----------------------------
 DROP TABLE IF EXISTS `user`;
@@ -165,13 +177,8 @@ CREATE TABLE `user`  (
 -- ----------------------------
 -- Records of user
 -- ----------------------------
-INSERT INTO `user` VALUES (2, 'admin', '系统管理员', 'c41d7c66e1b8404545aa3a0ece2006ac', 0, '130406198302141869', 'hello11@bdqn.com', '1583233515', '7.jpg', '2020-05-18 06:22:27', '2020-05-18 06:22:32');
-INSERT INTO `user` VALUES (10, 'cgn', '程广宁', '3c5f1113a4d6e401590e77e6d756e706', 1, '140225189987854589', '1044732267@qq.com', '13366055011', '2.jpg', '2020-05-18 06:22:34', '2020-05-18 06:22:37');
-INSERT INTO `user` VALUES (11, 'hyl', '忽悠了', '1fb1b8845efe4ff5b5b47fe305b6f053', 0, '12312', '12312', '1231', '9.jpg', '2020-05-18 06:22:35', '2020-12-15 08:17:59');
-INSERT INTO `user` VALUES (12, 'ck', '陈康', '6137d7637479b002b1934bda66b78717', 1, '140225189987854589', '1044732267@qq.com', '13366055010', '4.jpg', '2020-05-17 22:22:36', '2020-12-16 04:25:46');
-INSERT INTO `user` VALUES (31, 'ff', '丰富', 'b480cccdf4d0d9e87b34c2dcbdc8cb1c', 1, '1231', '1231', '12311', '10.jpg', '2020-12-14 05:51:19', '2020-12-16 15:13:01');
-INSERT INTO `user` VALUES (32, 'gf', '规范', 'b938aa4bfb13203541abc0aaa24e96a1', 0, '440623141241', '12913362@qq.com', '123123123', NULL, '2020-12-16 15:26:55', '2020-12-16 15:26:55');
-INSERT INTO `user` VALUES (34, 'gfs', '官方是', 'e1def38c3090f65201083a5f072b4683', 0, '1231', '12121', '1231231', NULL, '2020-12-17 07:04:30', '2020-12-17 07:12:08');
+INSERT INTO `user` VALUES (1, 'admin', '系统管理员', '123', 0, '130406198302141869', 'hello11@bdqn.com', '1583233515', '7.jpg', '2020-05-18 06:22:27', '2020-05-18 06:22:32');
+INSERT INTO `user` VALUES (2, 'ck', '陈康', '123', 1, '140225189987854589', '1044732267@qq.com', '13366055010', '4.jpg', '2020-05-17 22:22:36', '2020-12-16 04:25:46');
 
 -- ----------------------------
 -- Table structure for user_address
@@ -186,10 +193,5 @@ CREATE TABLE `user_address`  (
   `update_time` datetime(0) NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 50 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
-
--- ----------------------------
--- Records of user_address
--- ----------------------------
-INSERT INTO `user_address` VALUES (49, 12, '谢边村', '2', '2020-12-16 15:21:49', '2020-12-16 15:22:44');
 
 SET FOREIGN_KEY_CHECKS = 1;
