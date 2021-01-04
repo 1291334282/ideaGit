@@ -4,7 +4,7 @@
 导入sql文件
 
 启动后端：
-cmd进入target文件输入命令：java -jar graduation-0.0.1-SNAPSHOT.jar
+将项目导入idea运行（图片没有直接放进项目里，若想看到图片，请把img文件夹的图片拷贝到项目里的target/classes/img文件夹里）
 启动前端：
 cmd进入前端项目文件
 输入命令：npm install
