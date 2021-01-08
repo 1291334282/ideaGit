@@ -11,7 +11,7 @@
  Target Server Version : 50623
  File Encoding         : 65001
 
- Date: 19/12/2020 15:42:30
+ Date: 08/01/2021 21:08:27
 */
 
 SET NAMES utf8mb4;
@@ -34,7 +34,7 @@ CREATE TABLE `cart`  (
   INDEX `userId`(`user_id`) USING BTREE,
   CONSTRAINT `cart_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `product` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `cart_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 190 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Table structure for order_detail
@@ -48,7 +48,7 @@ CREATE TABLE `order_detail`  (
   `cost` float NOT NULL COMMENT '消费',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `PK__EASYBUY___66E1BD8E2F10007B`(`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 106 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 109 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Table structure for orders
@@ -65,7 +65,7 @@ CREATE TABLE `orders`  (
   `update_time` datetime(0) NOT NULL COMMENT '更新时间',
   `status` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '订单状态',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 134 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 137 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Table structure for product
@@ -82,12 +82,12 @@ CREATE TABLE `product`  (
   `file_name` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '文件名称',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `PK__EASYBUY___94F6E55132E0915F`(`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 803 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 22 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of product
 -- ----------------------------
-INSERT INTO `product` VALUES (1, '高等数学同济大学第七版上下册教材课本', '大一高数学习指导考研', 80, 19, 1, 5, 'math.png');
+INSERT INTO `product` VALUES (1, '高等数学同济大学第七版上下册教材课本', '大一高数学习指导考研', 80, 16, 1, 5, 'math.png');
 INSERT INTO `product` VALUES (2, '零基础C++从入门到精通', '计算机程序开发数据结构基础教程书籍', 59, 46, 1, 5, 'c.png');
 INSERT INTO `product` VALUES (3, '全新版大学英语第二版', '英语课本教材配套学习手册', 13, 46, 1, 6, 'English.png');
 INSERT INTO `product` VALUES (4, '计算机网络 谢希仁 第七版', '指定计算机教材', 40, 50, 1, 6, 'Interney.png');
@@ -107,7 +107,7 @@ INSERT INTO `product` VALUES (17, '中公教育国家教师证资格证考试用
 INSERT INTO `product` VALUES (18, '晨光文具答题卡涂卡2B自动铅笔', '快速填卡笔', 10, 50, 4, 16, '2bPencil.png');
 INSERT INTO `product` VALUES (19, '艾本C201大学四级听力耳机英语', '四六级考试专用FM调频耳机46级', 33, 50, 4, 14, 'earPhone.png');
 INSERT INTO `product` VALUES (20, '语梵F1 英语四六级听力耳机四级', 'FM调频蓝牙耳麦专业头戴式收音机', 40, 50, 4, 14, 'earPhone2.png');
-INSERT INTO `product` VALUES (21, '晨光A4纸打印复印纸', '四纸纸品打印机纸草稿纸办公用品', 17, 50, 4, 14, 'paper.png');
+INSERT INTO `product` VALUES (21, '晨光A4纸打印复印纸', '四纸纸品打印机纸草稿纸办公用品', 17, 49, 4, 14, 'paper.png');
 
 -- ----------------------------
 -- Table structure for product_category
@@ -120,7 +120,7 @@ CREATE TABLE `product_category`  (
   `type` int(11) NULL DEFAULT NULL COMMENT '级别(1:一级 2：二级 3：三级)',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `PK__EASYBUY___9EC2A4E236B12243`(`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 701 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 17 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of product_category
@@ -172,13 +172,14 @@ CREATE TABLE `user`  (
   `update_time` datetime(0) NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `PK__EASYBUY___C96109CC3A81B327`(`login_name`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 35 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 36 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of user
 -- ----------------------------
 INSERT INTO `user` VALUES (1, 'admin', '系统管理员', '123', 0, '130406198302141869', 'hello11@bdqn.com', '1583233515', '7.jpg', '2020-05-18 06:22:27', '2020-05-18 06:22:32');
-INSERT INTO `user` VALUES (2, 'ck', '陈康', '123', 1, '140225189987854589', '1044732267@qq.com', '13366055010', '4.jpg', '2020-05-17 22:22:36', '2020-12-16 04:25:46');
+INSERT INTO `user` VALUES (2, 'ck', '陈康', '123', 1, '140225189987854589', '1044732267@qq.com', '13366055010', 'QQ图片20191119143759.jpg', '2020-05-17 06:22:36', '2020-12-24 15:24:40');
+INSERT INTO `user` VALUES (35, 'wf', '汪峰', '123', 1, '44068219990128231', '1291334282@qq.com', '1234', '5.jpg', '2020-12-19 00:04:14', '2020-12-19 08:17:28');
 
 -- ----------------------------
 -- Table structure for user_address
@@ -191,7 +192,9 @@ CREATE TABLE `user_address`  (
   `remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '备注',
   `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   `update_time` datetime(0) NOT NULL,
+  `receive` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '收件人',
+  `phone` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '收件人电话',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 50 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 SET FOREIGN_KEY_CHECKS = 1;
