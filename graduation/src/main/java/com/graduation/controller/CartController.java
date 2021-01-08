@@ -76,14 +76,18 @@ public class CartController {
 
     @ApiOperation("功能：删除购物车内容(备注：需要传入购物车内订单对应的id和token)")
     @DeleteMapping("/deleteCartById")
-    public ResultUtil deleteById(@RequestParam(value = "id", required = true) Integer id,@RequestHeader("token") String token) {
+    public ResultUtil deleteById(@RequestParam(value = "id", required = true) Integer id, @RequestHeader("token") String token) {
+        Cart cart = cartService.getById(id);
+        Product product = productService.getById(cart.getProductId());
+        product.setStock(product.getStock()+cart.getQuantity());
+        productService.updateById(product);
         cartService.removeById(id);
         return ResultUtil.success(null, CodeEnum.DELETE_SUCCESS.msg(), CodeEnum.DELETE_SUCCESS.val());
     }
 
     @ApiOperation("功能：动态更新购物车数据，和确认订单时再更新一次(备注：需要传入购物车内订单对应的id，quantity数量，cost单条订单总花费和token)")
     @PutMapping("/updateCartById")
-    public ResultUtil updateCart(@RequestParam(value = "id", required = true) Integer id, @RequestParam(value = "quantity", required = true) Integer quantity, @RequestParam(value = "cost", required = true) Float cost,@RequestHeader("token") String token) {
+    public ResultUtil updateCart(@RequestParam(value = "id", required = true) Integer id, @RequestParam(value = "quantity", required = true) Integer quantity, @RequestParam(value = "cost", required = true) Float cost, @RequestHeader("token") String token) {
         Cart cart = cartService.getById(id);
         Product product = productService.getById(cart.getProductId());
         try {

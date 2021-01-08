@@ -66,9 +66,7 @@ public class OrderController {
     @ApiOperation("功能：查找对应登录人的全部订单,备注（需要传入token）")
     @GetMapping("/findOrders")
     public ResultUtil selectorder(@RequestHeader("token") String token) {
-        QueryWrapper wrapper = new QueryWrapper();
-        wrapper.eq("user_id",userService.findByToken(token).getUserId());
-        return ResultUtil.success(orderService.getMap(wrapper));
+        return ResultUtil.success(orderService.selectorderbyuserid(userService.findByToken(token).getUserId()));
     }
 }
 

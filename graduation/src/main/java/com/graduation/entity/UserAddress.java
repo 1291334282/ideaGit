@@ -45,6 +45,12 @@ public class UserAddress implements Serializable {
     @ApiModelProperty(value = "备注")
     private String remark;
 
+    @ApiModelProperty(value = "收件人")
+    private String receive;
+
+    @ApiModelProperty(value = "收件人电话")
+    private String phone;
+
     @ApiModelProperty(value = "创建时间")
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;

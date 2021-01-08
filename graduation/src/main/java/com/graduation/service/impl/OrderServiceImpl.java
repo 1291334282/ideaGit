@@ -61,4 +61,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
     public List<Orders> selectorder() {
         return orderMapper.selectList(null);
     }
+
+    @Override
+    public List<Orders> selectorderbyuserid(Integer userID) {
+        QueryWrapper wrapper = new QueryWrapper();
+        wrapper.eq("user_id",userID);
+        return orderMapper.selectList(wrapper);
+    }
 }

@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author 叼大
@@ -16,5 +16,8 @@ import java.util.List;
  */
 public interface OrderService extends IService<Orders> {
     public boolean save(Orders orders, User user);
+
     public List<Orders> selectorder();
+
+    public List<Orders> selectorderbyuserid(Integer userID);
 }
