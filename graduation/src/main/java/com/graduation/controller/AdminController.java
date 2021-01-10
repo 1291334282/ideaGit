@@ -64,7 +64,8 @@ public class AdminController {
         String refund_reason = order.getReason();
         //标识一次退款请求，同一笔交易多次退款需要保证唯一，如需部分退款，则此参数必传
         String out_request_no = order.getSerialnumber();
-
+        order.setStatus("已退货");
+        orderService.updateById(order);
         alipayRequest.setBizContent("{\"out_trade_no\":\"" + out_trade_no + "\","
                 + "\"refund_amount\":\"" + refund_amount + "\","
                 + "\"refund_reason\":\"" + refund_reason + "\","
@@ -72,6 +73,7 @@ public class AdminController {
 
         //请求
         String result = alipayClient.execute(alipayRequest).getBody();
+
         return ResultUtil.success(result, CodeEnum.PAYBACK_SUCCESS.msg(), CodeEnum.PAYBACK_SUCCESS.val());
     }
 

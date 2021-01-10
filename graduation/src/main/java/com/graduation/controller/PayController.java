@@ -91,13 +91,13 @@ public class PayController {
     @GetMapping("/paySuccessUrl")
     public ResultUtil paySuccessUrl(HttpServletRequest request) throws UnsupportedEncodingException, AlipayApiException {
         HttpSession session = request.getSession(false);
-
-        Orders orders = new Orders();
-        orders.setId((Integer) session.getAttribute("id"));
+        int id=(Integer) session.getAttribute("id");
+        Orders orders = orderService.getById(id);
+        orders.setId(id);
         orders.setStatus("未发货");
         orderService.updateById(orders);
         System.out.println("支付成功跳转成功");
-        return ResultUtil.success(CodeEnum.PAY_SUCCESS.msg(), CodeEnum.PAY_SUCCESS.val());
+        return ResultUtil.success(orders,CodeEnum.PAY_SUCCESS.msg(), CodeEnum.PAY_SUCCESS.val());
     }
 
 
