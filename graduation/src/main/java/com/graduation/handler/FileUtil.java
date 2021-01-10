@@ -30,7 +30,7 @@ public class FileUtil {
 //        if (!upload.exists()) upload.mkdirs();
 //        System.out.println(upload.getAbsolutePath());
 //        return upload.getAbsolutePath();
-        String path="D:\\img";
+        String path="C:\\img";
         return path;
     }
 
