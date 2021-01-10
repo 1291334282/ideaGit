@@ -125,7 +125,9 @@ public class UserController {
     public ResultUtil Upload(@RequestParam("file") MultipartFile file, @RequestHeader("token")String token) throws IOException {
         User user = userService.getById(userService.findByToken(token).getUserId());
         String fileName = file.getOriginalFilename();//获取文件名
+//        String filepath = FileUtil.getUploadPath();
         String filepath = FileUtil.getUploadPath();
+        System.out.println(filepath + File.separator + fileName);
         if (!file.isEmpty()) {
             try (BufferedOutputStream out = new BufferedOutputStream(
                     new FileOutputStream(new File(filepath + File.separator + fileName)))) {

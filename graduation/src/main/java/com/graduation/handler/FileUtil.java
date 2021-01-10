@@ -19,17 +19,19 @@ public class FileUtil {
 //    @Value("${prop.upload-folder}")
 //    private static String filePath;
     public static String getUploadPath(){
-        File path = null;
-        try {
-            path = new File(ResourceUtils.getURL("classpath:").getPath());
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        if (!path.exists()) path = new File("");
-        File upload = new File(path.getAbsolutePath(), "static/img/");
-        if (!upload.exists()) upload.mkdirs();
-        System.out.println(upload.getAbsolutePath());
-        return upload.getAbsolutePath();
+//        File path = null;
+//        try {
+//            path = new File(ResourceUtils.getURL("classpath:").getPath());
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//        if (!path.exists()) path = new File("");
+//        File upload = new File(path.getAbsolutePath(), "static/img/");
+//        if (!upload.exists()) upload.mkdirs();
+//        System.out.println(upload.getAbsolutePath());
+//        return upload.getAbsolutePath();
+        String path="D:\\img";
+        return path;
     }
 
 }
