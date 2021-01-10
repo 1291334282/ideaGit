@@ -1,5 +1,10 @@
 package com.graduation.controller;
 
+import com.alipay.api.AlipayApiException;
+import com.alipay.api.AlipayClient;
+import com.alipay.api.DefaultAlipayClient;
+import com.alipay.api.request.AlipayTradeRefundRequest;
+import com.graduation.config.AlipayConfig;
 import com.graduation.entity.*;
 import com.graduation.enums.CodeEnum;
 import com.graduation.handler.FileUtil;
@@ -34,6 +39,41 @@ public class AdminController {
     private OrderService orderService;
     @Autowired
     private ProductService productService;
+
+    @RequiresRoles({"admin"})
+    @ApiOperation("功能：退款，备注：需要传入订单的id和token")
+    @GetMapping("/payback")
+    public ResultUtil payback(@RequestParam(value = "id", required = true) Integer id, @RequestHeader("token") String token) throws AlipayApiException {
+        if (!userService.findByToken(token).getUserId().equals(1))
+            return ResultUtil.fail(CodeEnum.NO_AUTH.val(), CodeEnum.NO_AUTH.msg());
+        AlipayClient alipayClient = new DefaultAlipayClient(AlipayConfig.gatewayUrl, AlipayConfig.app_id, AlipayConfig.merchant_private_key, "json", AlipayConfig.charset, AlipayConfig.alipay_public_key, AlipayConfig.sign_type);
+
+        //设置请求参数
+        AlipayTradeRefundRequest alipayRequest = new AlipayTradeRefundRequest();
+        Orders order = orderService.getById(id);
+        if (!order.getStatus().equals("申请退款"))
+            return ResultUtil.fail(CodeEnum.PAYBACK_FAIL.val(), CodeEnum.PAYBACK_FAIL.msg());
+        //商户订单号，商户网站订单系统中唯一订单号
+        String out_trade_no = order.getSerialnumber();
+        //支付宝交易号
+//        String trade_no = new String(request.getParameter("WIDTRtrade_no").getBytes("ISO-8859-1"),"UTF-8");
+        //请二选一设置
+        //需要退款的金额，该金额不能大于订单金额，必填
+        String refund_amount = order.getCost().toString();
+        //退款的原因说明
+        String refund_reason = order.getReason();
+        //标识一次退款请求，同一笔交易多次退款需要保证唯一，如需部分退款，则此参数必传
+        String out_request_no = order.getSerialnumber();
+
+        alipayRequest.setBizContent("{\"out_trade_no\":\"" + out_trade_no + "\","
+                + "\"refund_amount\":\"" + refund_amount + "\","
+                + "\"refund_reason\":\"" + refund_reason + "\","
+                + "\"out_request_no\":\"" + out_request_no + "\"}");
+
+        //请求
+        String result = alipayClient.execute(alipayRequest).getBody();
+        return ResultUtil.success(result, CodeEnum.PAYBACK_SUCCESS.msg(), CodeEnum.PAYBACK_SUCCESS.val());
+    }
 
     @RequiresRoles({"admin"})
     @ApiOperation("功能：删除个人信息(备注：管理员使用，需要传入user的id)")

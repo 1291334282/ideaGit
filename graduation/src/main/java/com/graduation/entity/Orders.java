@@ -61,4 +61,7 @@ public class Orders implements Serializable {
 
     @ApiModelProperty(value = "订单状态")
     private String status;
+
+    @ApiModelProperty(value = "退款原因")
+    private String reason;
 }

@@ -98,6 +98,11 @@
             <artifactId>fastjson</artifactId>
             <version>1.2.4</version>
         </dependency>
+        <dependency>
+            <groupId>com.alipay.sdk</groupId>
+            <artifactId>alipay-sdk-java</artifactId>
+            <version>3.1.0</version>
+        </dependency>
     </dependencies>
 
     <build>

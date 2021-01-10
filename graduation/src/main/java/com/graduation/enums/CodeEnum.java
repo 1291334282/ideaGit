@@ -16,6 +16,8 @@ public enum CodeEnum {
     LOGIN_SUCCESS("205", "登陆成功"),
     LOGINOUT_SUCCESS("206", "注销成功"),
     UPLOAD_SUCCESS("207", "上传成功"),
+    PAY_SUCCESS("208", "支付成功"),
+    PAYBACK_SUCCESS("209", "退款成功"),
     /**
      * 操作失败
      */
@@ -36,7 +38,8 @@ public enum CodeEnum {
     UPLOAD_FAIL("514", "上传失败"),
     FILE_EMPTY("515", "空文件"),
     PRODUCT_IS_EXISTS("516", "商品已存在购物车里，请去购物车调整"),
-    LOGIN_IS_LATE("517","登录凭证已失效，请重新登录")
+    LOGIN_IS_LATE("517","登录凭证已失效，请重新登录"),
+    PAYBACK_FAIL("518", "退款失败"),
     ;
 
     CodeEnum(String value, String msg) {

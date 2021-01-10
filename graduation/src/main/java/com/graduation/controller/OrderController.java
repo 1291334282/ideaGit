@@ -1,7 +1,12 @@
 package com.graduation.controller;
 
 
+import com.alipay.api.AlipayApiException;
+import com.alipay.api.AlipayClient;
+import com.alipay.api.DefaultAlipayClient;
+import com.alipay.api.request.AlipayTradePagePayRequest;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.graduation.config.AlipayConfig;
 import com.graduation.entity.Orders;
 import com.graduation.entity.ResultUtil;
 import com.graduation.entity.User;
@@ -11,6 +16,7 @@ import com.graduation.service.OrderService;
 import com.graduation.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,26 +53,49 @@ public class OrderController {
         User user = userService.getById(userService.findByToken(token).getUserId());
         orders.setUserId(user.getId());
         orders.setLoginName(user.getLoginName());
-        orders.setStatus("未发货");
+        orders.setStatus("未支付");
         String seriaNumber = null;
         try {
             StringBuffer result = new StringBuffer();
-            for(int i=0;i<32;i++) {
+            for (int i = 0; i < 32; i++) {
                 result.append(Integer.toHexString(new Random().nextInt(16)));
             }
-            seriaNumber =  result.toString().toUpperCase();
+            seriaNumber = result.toString().toUpperCase();
         } catch (Exception e) {
             e.printStackTrace();
         }
         orders.setSerialnumber(seriaNumber);
         orderService.save(orders, user);
-        return ResultUtil.success(orders,CodeEnum.ADD_SUCCESS.msg(),CodeEnum.ADD_SUCCESS.val());
+        return ResultUtil.success(orders, CodeEnum.ADD_SUCCESS.msg(), CodeEnum.ADD_SUCCESS.val());
     }
 
     @ApiOperation("功能：查找对应登录人的全部订单,备注（需要传入token）")
     @GetMapping("/findOrders")
     public ResultUtil selectorder(@RequestHeader("token") String token) {
         return ResultUtil.success(orderService.selectorderbyuserid(userService.findByToken(token).getUserId()));
+    }
+
+    //    @ApiOperation("功能：修改订单状态,把未支付改成未发货(备注：需要传入orders的id")
+//    @PutMapping("/updateOrdersStatus")
+//    public ResultUtil updateOrderStatus(@RequestParam(value = "id", required = true) Integer id, @RequestHeader("token") String token) {
+//        Orders orders = new Orders();
+//        orders.setId(id);
+//        orders.setStatus("未发货");
+//        if (orderService.updateById(orders))
+//            return ResultUtil.success(null, CodeEnum.UPDATE_SUCCESS.msg(), CodeEnum.UPDATE_SUCCESS.val());
+//        return ResultUtil.fail(CodeEnum.UPDATE_FAIL.val(), CodeEnum.UPDATE_FAIL.msg());
+//    }
+    @ApiOperation("功能：修改状态为退款待审核，备注：需要传入订单的id和token和退款原因")
+    @PutMapping("/payback")
+    public ResultUtil payback(@RequestParam(value = "id", required = true) Integer id, @RequestHeader("token") String token,@RequestParam(value = "reason", required = true) String reason){
+        Orders orders = new Orders();
+        orders.setId(id);
+        orders.setStatus("申请退款");
+        orders.setReason(reason);
+        if (orderService.updateById(orders))
+            return ResultUtil.success(null, "退款待审核", "200");
+        return ResultUtil.fail(CodeEnum.UPDATE_FAIL.val(), CodeEnum.UPDATE_FAIL.msg());
+
     }
 }
 
