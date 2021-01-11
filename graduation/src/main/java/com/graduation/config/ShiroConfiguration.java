@@ -52,7 +52,7 @@ public class ShiroConfiguration {
         filterMap.put("/img/**", "anon");
         filterMap.put("/productCategory/*", "anon");
         filterMap.put("/product/*", "anon");
-        filterMap.put("/paycheck/*", "anon");
+        filterMap.put("/alipay/*", "anon");
         filterMap.put("/swagger/**", "anon");
         filterMap.put("/v2/api-docs", "anon");
         filterMap.put("/swagger-ui.html", "anon");

@@ -40,6 +40,7 @@ public enum CodeEnum {
     PRODUCT_IS_EXISTS("516", "商品已存在购物车里，请去购物车调整"),
     LOGIN_IS_LATE("517","登录凭证已失效，请重新登录"),
     PAYBACK_FAIL("518", "退款失败"),
+    PAY_FAIL("519", "支付失败"),
     ;
 
     CodeEnum(String value, String msg) {

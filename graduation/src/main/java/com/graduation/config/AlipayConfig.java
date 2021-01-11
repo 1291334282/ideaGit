@@ -1,18 +1,14 @@
 package com.graduation.config;
 
-/* *
- *类名：AlipayConfig
- *功能：基础配置类
- *详细：设置帐户有关信息及返回路径
- *修改日期：2017-04-05
- *说明：
- *以下代码只是为了方便商户测试而提供的样例代码，商户可以根据自己网站的需要，按照技术文档编写,并非一定要使用该代码。
- *该代码仅供学习和研究支付宝接口使用，只是提供一个参考。
+/**
+ * @Description notify_url 和 return_url 需要外网可以访问，建议natapp 内网穿透
+ * @Date 2020-10-29 15:02
+ * @Author: StarSea99
  */
-
 public class AlipayConfig {
-
-//↓↓↓↓↓↓↓↓↓↓请在这里配置您的基本信息↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+    //这里用natapp内外网穿透
+//    public static final String natUrl = "http://gca8w8.natappfree.cc";
+    public static final String natUrl = "http://localhost:9000";
 
     // 应用ID,您的APPID，收款账号既是您的APPID对应支付宝账号
     public static String app_id = "2021000116695211";
@@ -23,12 +19,13 @@ public class AlipayConfig {
     // 支付宝公钥,查看地址：https://openhome.alipay.com/platform/keyManage.htm 对应APPID下的支付宝公钥。
     public static String alipay_public_key = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAkVQGJu2sk/g0eMlJ9K0IseJm/y1Y+5TkYqjRWqS9dHdxxGzMVJDtQoCpyIJUQ7N4dth/HYpzyzS5DIU/pBnHSM5z3Vc2dS0oEvXLyKOUBhR/O8QOy9JCocJzU++ylnsfIt88SMLGMgwOPHt/1cTD/xEztdBpjhaGp88U/mcNpZt9+qTNPc5afZAB+86dQRDhIF9k0GkqEQdQxi+LSrJAnBdf5SfMFHw3RD14Tz88+rnckTEsZzNFVS5pNrSR3qOiM4r3TFBqsCMjyqDbOl3Cv69Enc4S36lKiMhMhw7T3w3A33rVm5VKFpLBzNysDIPrxtnTMx38wT9rufnmf6ic9QIDAQAB";
 
+
     // 服务器异步通知页面路径  需http://格式的完整路径，不能加?id=123这类自定义参数，必须外网可以正常访问
-    public static String notify_url = "http://localhost:9000/paycheck/paySuccessDo";
+    public static String notify_url = natUrl + "/alipay/alipayNotifyNotice";
 
     // 页面跳转同步通知页面路径 需http://格式的完整路径，不能加?id=123这类自定义参数，必须外网可以正常访问
-    public static String return_url = "http://localhost:9000/paycheck/paySuccessUrl";
-
+    public static String return_url = natUrl + "/alipay/alipayReturnNotice";
+//    public static String return_url = "http://login.calidray.com/?#/sign";
     // 签名方式
     public static String sign_type = "RSA2";
 
@@ -36,34 +33,5 @@ public class AlipayConfig {
     public static String charset = "utf-8";
 
     // 支付宝网关
-    public static String gatewayUrl = "https://openapi.alipaydev.com/gateway.do";
-
-    // 支付宝网关
-//	public static String log_path = "C:\\";
-
-
-//↑↑↑↑↑↑↑↑↑↑请在这里配置您的基本信息↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
-
-    /**
-     * 写日志，方便测试（看网站需求，也可以改成把记录存入数据库）
-     * @param sWord 要写入日志里的文本内容
-     */
-//    public static void logResult(String sWord) {
-//        FileWriter writer = null;
-//        try {
-//            writer = new FileWriter(log_path + "alipay_log_" + System.currentTimeMillis()+".txt");
-//            writer.write(sWord);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        } finally {
-//            if (writer != null) {
-//                try {
-//                    writer.close();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }
-//    }
+    public static String gatewayUrl = "https://openapi.alipaydev.com/gateway.do";//注意：沙箱测试环境，正式环境为：https://openapi.alipay.com/gateway.do
 }
-
