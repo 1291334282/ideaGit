@@ -30,7 +30,8 @@ public class FileUtil {
 //        if (!upload.exists()) upload.mkdirs();
 //        System.out.println(upload.getAbsolutePath());
 //        return upload.getAbsolutePath();
-        String path="C:\\img";
+        String path="C:\\img";//本地用
+//        String path="/root/img";//阿里云用
         return path;
     }
 
