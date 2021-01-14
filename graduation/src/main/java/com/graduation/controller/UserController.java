@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.*;
+import java.util.logging.Logger;
 
 /**
  * <p>
@@ -127,7 +128,8 @@ public class UserController {
         String fileName = file.getOriginalFilename();//获取文件名
 //        String filepath = FileUtil.getUploadPath();
         String filepath = FileUtil.getUploadPath();
-        System.out.println(filepath + File.separator + fileName);
+//        System.out.println(filepath + File.separator + fileName);
+
         if (!file.isEmpty()) {
             try (BufferedOutputStream out = new BufferedOutputStream(
                     new FileOutputStream(new File(filepath + File.separator + fileName)))) {
