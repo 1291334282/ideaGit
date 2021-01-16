@@ -17,6 +17,8 @@ import com.graduation.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,10 +48,12 @@ public class OrderController {
     private CartService cartService;
     @Autowired
     private UserService userService;
+    Logger log = LoggerFactory.getLogger(OrderController.class);
 
     @ApiOperation("功能：点击订单确认后添加到orders里(备注：需要传入总金额cost,用户地址userAddress,token)")
     @PostMapping("/addOrder")
     public ResultUtil settlement3(Orders orders, @RequestHeader("token") String token) {
+        log.info("进入添加订单接口");
         User user = userService.getById(userService.findByToken(token).getUserId());
         orders.setUserId(user.getId());
         orders.setLoginName(user.getLoginName());
@@ -72,22 +76,14 @@ public class OrderController {
     @ApiOperation("功能：查找对应登录人的全部订单,备注（需要传入token）")
     @GetMapping("/findOrders")
     public ResultUtil selectorder(@RequestHeader("token") String token) {
+        log.info("进入查找全部订单接口");
         return ResultUtil.success(orderService.selectorderbyuserid(userService.findByToken(token).getUserId()));
     }
 
-    //    @ApiOperation("功能：修改订单状态,把未支付改成未发货(备注：需要传入orders的id")
-//    @PutMapping("/updateOrdersStatus")
-//    public ResultUtil updateOrderStatus(@RequestParam(value = "id", required = true) Integer id, @RequestHeader("token") String token) {
-//        Orders orders = new Orders();
-//        orders.setId(id);
-//        orders.setStatus("未发货");
-//        if (orderService.updateById(orders))
-//            return ResultUtil.success(null, CodeEnum.UPDATE_SUCCESS.msg(), CodeEnum.UPDATE_SUCCESS.val());
-//        return ResultUtil.fail(CodeEnum.UPDATE_FAIL.val(), CodeEnum.UPDATE_FAIL.msg());
-//    }
     @ApiOperation("功能：修改状态为退款待审核，备注：需要传入订单的id和token和退款原因")
     @PutMapping("/payback")
-    public ResultUtil payback(@RequestParam(value = "id", required = true) Integer id, @RequestHeader("token") String token,@RequestParam(value = "reason", required = true) String reason){
+    public ResultUtil payback(@RequestParam(value = "id", required = true) Integer id, @RequestHeader("token") String token, @RequestParam(value = "reason", required = true) String reason) {
+        log.info("进入退款接口");
         Orders orders = new Orders();
         orders.setId(id);
         orders.setStatus("申请退款");

@@ -15,6 +15,8 @@ import com.graduation.service.UserAddressService;
 import com.graduation.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,10 +44,12 @@ public class CartController {
     private ProductService productService;
     @Autowired
     private UserService userService;
+    Logger log = LoggerFactory.getLogger(CartController.class);
 
     @ApiOperation("功能：添加订单到购物车接口(备注：需要传入productId货物表的id，price单价，quantity数量,token)")
     @PostMapping("/addCart")
     public ResultUtil add(@RequestParam(value = "productId", required = true) Integer productId, @RequestParam(value = "price", required = true) Float price, @RequestParam(value = "quantity", required = true) Integer quantity, @RequestHeader("token") String token) {
+        log.info("进入添加购物车接口");
         User user = userService.getById(userService.findByToken(token).getUserId());
         List<Cart> list = cartService.list(
                 new QueryWrapper<Cart>()
@@ -71,15 +75,17 @@ public class CartController {
     @ApiOperation("功能：购物车显示接口,备注：（传入token）")
     @GetMapping("/findAllCart")
     public ResultUtil findAllCart(@RequestHeader("token") String token) {
+        log.info("进入购物车显示接口");
         return ResultUtil.success(cartService.findAllCartVOByUserId(userService.findByToken(token).getUserId()));
     }
 
     @ApiOperation("功能：删除购物车内容(备注：需要传入购物车内订单对应的id和token)")
     @DeleteMapping("/deleteCartById")
     public ResultUtil deleteById(@RequestParam(value = "id", required = true) Integer id, @RequestHeader("token") String token) {
+        log.info("进入删除购物车接口");
         Cart cart = cartService.getById(id);
         Product product = productService.getById(cart.getProductId());
-        product.setStock(product.getStock()+cart.getQuantity());
+        product.setStock(product.getStock() + cart.getQuantity());
         productService.updateById(product);
         cartService.removeById(id);
         return ResultUtil.success(null, CodeEnum.DELETE_SUCCESS.msg(), CodeEnum.DELETE_SUCCESS.val());
@@ -88,6 +94,7 @@ public class CartController {
     @ApiOperation("功能：动态更新购物车数据，和确认订单时再更新一次(备注：需要传入购物车内订单对应的id，quantity数量，cost单条订单总花费和token)")
     @PutMapping("/updateCartById")
     public ResultUtil updateCart(@RequestParam(value = "id", required = true) Integer id, @RequestParam(value = "quantity", required = true) Integer quantity, @RequestParam(value = "cost", required = true) Float cost, @RequestHeader("token") String token) {
+        log.info("进入更新购物车接口");
         Cart cart = cartService.getById(id);
         Product product = productService.getById(cart.getProductId());
         try {
@@ -106,7 +113,6 @@ public class CartController {
             return ResultUtil.fail(CodeEnum.STOCK_EMPTY.val(), CodeEnum.STOCK_EMPTY.msg());
         }
         return ResultUtil.fail(CodeEnum.UPDATE_FAIL.val(), CodeEnum.UPDATE_FAIL.msg());
-
     }
 }
 

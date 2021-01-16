@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
@@ -35,6 +36,7 @@ public class PayController {
     @Autowired
     private OrderService orderService;
     Logger log = LoggerFactory.getLogger(PayController.class);
+
     @ApiOperation("功能：支付，备注：需要传入订单的id")
     @GetMapping("/pay")
     public String pay(Integer id, HttpServletRequest request) throws AlipayApiException {
@@ -71,10 +73,11 @@ public class PayController {
 
         //请求
         String result = alipayClient.pageExecute(alipayRequest).getBody();
-        System.out.println("==="+result);
+        System.out.println("===" + result);
         return result;
     }
-//
+
+    //
 //    @GetMapping("/paySuccessUrl")
 //    public ResultUtil paySuccessUrl(HttpServletRequest request) throws UnsupportedEncodingException, AlipayApiException {
 //        HttpSession session = request.getSession(false);
@@ -88,7 +91,7 @@ public class PayController {
 //    }
     @ApiOperation("功能：支付成功同步跳转")
     @RequestMapping("alipayReturnNotice")
-        public ResultUtil alipayReturnNotice(HttpServletRequest request, HttpServletRequest response, Map map) throws Exception {
+    public ResultUtil alipayReturnNotice(HttpServletRequest request, HttpServletRequest response, Map map) throws Exception {
 
         log.info("支付成功, 进入同步通知接口...");
 
@@ -128,9 +131,9 @@ public class PayController {
             order.setStatus("未发货");
             orderService.updateById(order);
             log.info("********************** 支付成功(支付宝同步通知) **********************");
-            log.info("* 订单号: "+out_trade_no);
-            log.info("* 支付宝交易号:"+trade_no);
-            log.info("* 实付金额:"+total_amount);
+            log.info("* 订单号: " + out_trade_no);
+            log.info("* 支付宝交易号:" + trade_no);
+            log.info("* 实付金额:" + total_amount);
             log.info("***************************************************************");
 
             map.put("out_trade_no", out_trade_no);
@@ -144,7 +147,7 @@ public class PayController {
         }
 
         //前后分离形式  直接返回页面 记得加上注解@Response  http://login.calidray.com你要返回的网址，再页面初始化时候让前端调用你其他接口，返回信息
-        return ResultUtil.success(map,CodeEnum.PAY_SUCCESS.msg(), CodeEnum.PAY_SUCCESS.val());
+        return ResultUtil.success(map, CodeEnum.PAY_SUCCESS.msg(), CodeEnum.PAY_SUCCESS.val());
     }
 
 
@@ -160,6 +163,7 @@ public class PayController {
      * 如果没有收到该页面返回的 success
      * 建议该页面只做支付成功的业务逻辑处理，退款的处理请以调用退款查询接口的结果为准。
      */
+
     /**
      * @Description: 支付宝异步 通知  制作业务处理
      * @Description TODO

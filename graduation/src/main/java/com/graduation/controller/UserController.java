@@ -43,26 +43,6 @@ public class UserController {
     @ApiOperation("功能：登录(备注：传入用户名loginName，密码password)")
     @PostMapping(value = "/login")
     public ResultUtil login(@RequestParam(value = "loginName", required = true) String loginName, @RequestParam(value = "password", required = true) String password) {
-        //构造登录令牌
-//        try {
-//            UsernamePasswordToken upToken = new UsernamePasswordToken(loginName, password);
-//            //1.获取subject
-//            Subject subject = SecurityUtils.getSubject();
-//            //2.调用subject进行登录
-//            subject.login(upToken);
-//            //把用户信息全存到session
-//            QueryWrapper queryWrapper = new QueryWrapper();
-//            queryWrapper.eq("login_name", loginName);
-//            User user = userService.getOne(queryWrapper);
-//            HttpSession session = request.getSession();
-//            session.setAttribute("user", user);
-//            //只返回登录名
-//            return ResultUtil.success(loginName, CodeEnum.LOGIN_SUCCESS.msg(), CodeEnum.LOGIN_SUCCESS.val());
-//        } catch (UnknownAccountException e) {
-//            return ResultUtil.fail(CodeEnum.USER_NOT_EXIST.val(), CodeEnum.USER_NOT_EXIST.msg());
-//        } catch (IncorrectCredentialsException e) {
-//            return ResultUtil.fail(CodeEnum.PASSWORD_FAIL.val(), CodeEnum.PASSWORD_FAIL.msg());
-//        }
         log.info("进入登录接口");
         QueryWrapper queryWrapper = new QueryWrapper();
         queryWrapper.eq("login_name", loginName);
@@ -80,6 +60,7 @@ public class UserController {
     @ApiOperation("功能：注销(备注：传入token)")
     @PostMapping("/loginout")
     public ResultUtil loginout(@RequestHeader("token") String token) {
+        log.info("进入注销接口");
         userService.logout(token);
         return ResultUtil.success(null, CodeEnum.LOGINOUT_SUCCESS.msg(), CodeEnum.LOGINOUT_SUCCESS.val());
     }
@@ -87,6 +68,7 @@ public class UserController {
     @ApiOperation("功能：注册(备注：id,createTime,updateTime为自动生成,不用输入)")
     @PostMapping("/register")
     public ResultUtil register(User user) {
+        log.info("进入注册接口");
         boolean result = false;
         try {
             result = userService.save(user);
@@ -100,6 +82,7 @@ public class UserController {
     @ApiOperation("功能：显示个人信息")
     @GetMapping("/findUserOne")
     public ResultUtil userInfo(@RequestHeader("token") String token) {
+        log.info("进入显示个人信息接口");
         User user = userService.getById(userService.findByToken(token).getUserId());
         return ResultUtil.success(user);
     }
@@ -107,6 +90,7 @@ public class UserController {
     @ApiOperation("功能：修改个人信息（token一定输入，id，loginName，filename，updatetime，createtime无需输入，其他选择输入）")
     @PutMapping("/updateUser")
     public ResultUtil updateuser(@RequestHeader("token") String token, User user2) {
+        log.info("进入修改个人信息接口");
         User user = userService.getById(userService.findByToken(token).getUserId());
         user2.setId(user.getId());
         if (userService.updateById(user2))
@@ -114,21 +98,10 @@ public class UserController {
         return ResultUtil.fail(CodeEnum.UPDATE_FAIL.val(), CodeEnum.UPDATE_FAIL.msg());
     }
 
-//    @ApiOperation("功能：没有登陆时返回信息")
-//    @GetMapping("/nologin")
-//    public ResultUtil nogin() {
-//        return ResultUtil.fail(CodeEnum.NO_LOGIN.val(), CodeEnum.NO_LOGIN.msg());
-//    }
-//
-//    @ApiOperation("功能：没有权限时返回信息")
-//    @GetMapping("/noauth")
-//    public ResultUtil noauth() {
-//        return ResultUtil.fail(CodeEnum.NO_AUTH.val(), CodeEnum.NO_AUTH.msg());
-//    }
-
     @ApiOperation("功能：上传头像，备注（token一定输入，文件一定上传）")
     @PostMapping("/upload")
     public ResultUtil Upload(@RequestParam("file") MultipartFile file, @RequestHeader("token") String token) throws IOException {
+        log.info("进入上传头像接口");
         User user = userService.getById(userService.findByToken(token).getUserId());
         String fileName = file.getOriginalFilename();//获取文件名
 //        String filepath = FileUtil.getUploadPath();
