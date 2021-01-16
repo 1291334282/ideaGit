@@ -12,13 +12,11 @@ import java.io.FileOutputStream;
  * @Author: Manitozhang
  * @Data: 2019/1/9 16:51
  * @Email: manitozhang@foxmail.com
- *
+ * <p>
  * 文件工具类
  */
 public class FileUtil {
-//    @Value("${prop.upload-folder}")
-//    private static String filePath;
-    public static String getUploadPath(){
+    public static String getUploadPath() {
 //        File path = null;
 //        try {
 //            path = new File(ResourceUtils.getURL("classpath:").getPath());
@@ -30,7 +28,7 @@ public class FileUtil {
 //        if (!upload.exists()) upload.mkdirs();
 //        System.out.println(upload.getAbsolutePath());
 //        return upload.getAbsolutePath();
-        String path="C:\\img";//本地用
+        String path = "C:\\img";//本地用
 //        String path="/root/img";//阿里云用
         return path;
     }
