@@ -15,6 +15,7 @@ import com.graduation.enums.CodeEnum;
 import com.graduation.service.OrderService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
@@ -33,10 +34,11 @@ import java.util.Map;
 public class PayController {
     @Autowired
     private OrderService orderService;
-
+    Logger log = LoggerFactory.getLogger(PayController.class);
     @ApiOperation("功能：支付，备注：需要传入订单的id")
     @GetMapping("/pay")
     public String pay(Integer id, HttpServletRequest request) throws AlipayApiException {
+        log.info("进入支付接口");
         Orders order = orderService.getById(id);
 
         //获得初始化的AlipayClient
@@ -88,7 +90,7 @@ public class PayController {
     @RequestMapping("alipayReturnNotice")
         public ResultUtil alipayReturnNotice(HttpServletRequest request, HttpServletRequest response, Map map) throws Exception {
 
-        System.out.println("支付成功, 进入同步通知接口...");
+        log.info("支付成功, 进入同步通知接口...");
 
         //获取支付宝GET过来反馈信息
         Map<String, String> params = new HashMap<String, String>();
@@ -125,11 +127,11 @@ public class PayController {
             Orders order = orderService.getOne(wrapper);
             order.setStatus("未发货");
             orderService.updateById(order);
-            System.out.println("********************** 支付成功(支付宝同步通知) **********************");
-            System.out.println("* 订单号: "+out_trade_no);
-            System.out.println("* 支付宝交易号:"+trade_no);
-            System.out.println("* 实付金额:"+total_amount);
-            System.out.println("***************************************************************");
+            log.info("********************** 支付成功(支付宝同步通知) **********************");
+            log.info("* 订单号: "+out_trade_no);
+            log.info("* 支付宝交易号:"+trade_no);
+            log.info("* 实付金额:"+total_amount);
+            log.info("***************************************************************");
 
             map.put("out_trade_no", out_trade_no);
             map.put("trade_no", trade_no);
@@ -137,7 +139,7 @@ public class PayController {
 //            map.put("productName", product.getName());
 
         } else {
-            System.out.println("支付, 验签失败...");
+            log.info("支付, 验签失败...");
             return ResultUtil.fail(CodeEnum.PAY_FAIL.val(), CodeEnum.PAY_FAIL.msg());
         }
 
@@ -168,7 +170,7 @@ public class PayController {
     @RequestMapping(value = "/alipayNotifyNotice")
     public String alipayNotifyNotice(HttpServletRequest request, HttpServletRequest response) throws Exception {
 
-        System.out.println("支付成功, 进入异步通知接口...");
+        log.info("支付成功, 进入异步通知接口...");
 
         //获取支付宝POST过来反馈信息
         Map<String, String> params = new HashMap<String, String>();
@@ -238,9 +240,9 @@ public class PayController {
 //                LOGGER.info("* 购买产品: {}", product.getName());
 //                LOGGER.info("***************************************************************");
 //            }
-            System.out.println("支付成功...");
+            log.info("支付成功...");
         } else {//验证失败
-            System.out.println("支付, 验签失败...");
+            log.info("支付, 验签失败...");
         }
         return "success";
     }

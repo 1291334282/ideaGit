@@ -9,15 +9,19 @@ import com.graduation.handler.FileUtil;
 import com.graduation.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.util.ByteSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.*;
-import java.util.logging.Logger;
+
 
 /**
  * <p>
@@ -34,10 +38,11 @@ import java.util.logging.Logger;
 public class UserController {
     @Autowired
     private UserService userService;
+    Logger log = LoggerFactory.getLogger(UserController.class);
 
     @ApiOperation("功能：登录(备注：传入用户名loginName，密码password)")
     @PostMapping(value = "/login")
-    public ResultUtil login(@RequestParam(value = "loginName", required = true)String loginName,@RequestParam(value = "password", required = true) String password) {
+    public ResultUtil login(@RequestParam(value = "loginName", required = true) String loginName, @RequestParam(value = "password", required = true) String password) {
         //构造登录令牌
 //        try {
 //            UsernamePasswordToken upToken = new UsernamePasswordToken(loginName, password);
@@ -58,23 +63,23 @@ public class UserController {
 //        } catch (IncorrectCredentialsException e) {
 //            return ResultUtil.fail(CodeEnum.PASSWORD_FAIL.val(), CodeEnum.PASSWORD_FAIL.msg());
 //        }
-        QueryWrapper queryWrapper=new QueryWrapper();
-        queryWrapper.eq("login_name",loginName);
+        log.info("进入登录接口");
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.eq("login_name", loginName);
         User user = userService.getOne(queryWrapper);
         if (user == null) {
             return ResultUtil.fail(CodeEnum.USER_NOT_EXIST.val(), CodeEnum.USER_NOT_EXIST.msg());
-        }else if (!user.getPassword().equals(password)){
+        } else if (!user.getPassword().equals(password)) {
             return ResultUtil.fail(CodeEnum.PASSWORD_FAIL.val(), CodeEnum.PASSWORD_FAIL.msg());
-        }
-        else {
+        } else {
             //生成token，并保存到数据库
-            return ResultUtil.success(userService.createToken(user.getId()),"登陆成功","200");
+            return ResultUtil.success(userService.createToken(user.getId()), "登陆成功", "200");
         }
     }
 
     @ApiOperation("功能：注销(备注：传入token)")
     @PostMapping("/loginout")
-    public ResultUtil loginout(@RequestHeader("token")String token) {
+    public ResultUtil loginout(@RequestHeader("token") String token) {
         userService.logout(token);
         return ResultUtil.success(null, CodeEnum.LOGINOUT_SUCCESS.msg(), CodeEnum.LOGINOUT_SUCCESS.val());
     }
@@ -94,14 +99,14 @@ public class UserController {
 
     @ApiOperation("功能：显示个人信息")
     @GetMapping("/findUserOne")
-    public ResultUtil userInfo(@RequestHeader("token")String token) {
+    public ResultUtil userInfo(@RequestHeader("token") String token) {
         User user = userService.getById(userService.findByToken(token).getUserId());
         return ResultUtil.success(user);
     }
 
     @ApiOperation("功能：修改个人信息（token一定输入，id，loginName，filename，updatetime，createtime无需输入，其他选择输入）")
     @PutMapping("/updateUser")
-    public ResultUtil updateuser(@RequestHeader("token")String token, User user2) {
+    public ResultUtil updateuser(@RequestHeader("token") String token, User user2) {
         User user = userService.getById(userService.findByToken(token).getUserId());
         user2.setId(user.getId());
         if (userService.updateById(user2))
@@ -123,12 +128,12 @@ public class UserController {
 
     @ApiOperation("功能：上传头像，备注（token一定输入，文件一定上传）")
     @PostMapping("/upload")
-    public ResultUtil Upload(@RequestParam("file") MultipartFile file, @RequestHeader("token")String token) throws IOException {
+    public ResultUtil Upload(@RequestParam("file") MultipartFile file, @RequestHeader("token") String token) throws IOException {
         User user = userService.getById(userService.findByToken(token).getUserId());
         String fileName = file.getOriginalFilename();//获取文件名
 //        String filepath = FileUtil.getUploadPath();
         String filepath = FileUtil.getUploadPath();
-//        System.out.println(filepath + File.separator + fileName);
+        log.info(filepath + File.separator + fileName);
 
         if (!file.isEmpty()) {
             try (BufferedOutputStream out = new BufferedOutputStream(
