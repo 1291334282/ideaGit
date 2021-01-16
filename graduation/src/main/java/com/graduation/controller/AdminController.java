@@ -14,6 +14,8 @@ import com.graduation.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,11 +41,13 @@ public class AdminController {
     private OrderService orderService;
     @Autowired
     private ProductService productService;
+    Logger log = LoggerFactory.getLogger(AdminController.class);
 
     @RequiresRoles({"admin"})
     @ApiOperation("功能：退款，备注：需要传入订单的id和token")
     @GetMapping("/payback")
     public ResultUtil payback(@RequestParam(value = "id", required = true) Integer id, @RequestHeader("token") String token) throws AlipayApiException {
+        log.info("进入退款接口");
         if (!userService.findByToken(token).getUserId().equals(1))
             return ResultUtil.fail(CodeEnum.NO_AUTH.val(), CodeEnum.NO_AUTH.msg());
         AlipayClient alipayClient = new DefaultAlipayClient(AlipayConfig.gatewayUrl, AlipayConfig.app_id, AlipayConfig.merchant_private_key, "json", AlipayConfig.charset, AlipayConfig.alipay_public_key, AlipayConfig.sign_type);
@@ -81,6 +85,7 @@ public class AdminController {
     @ApiOperation("功能：删除个人信息(备注：管理员使用，需要传入user的id)")
     @DeleteMapping("/deleteUserById")
     public ResultUtil deleteuser(@RequestParam(value = "id", required = true) Integer id, @RequestHeader("token") String token) {
+        log.info("进入删除个人信息接口");
         if (!userService.findByToken(token).getUserId().equals(1))
             return ResultUtil.fail(CodeEnum.NO_AUTH.val(), CodeEnum.NO_AUTH.msg());
         if (userService.removeById(id))
@@ -92,6 +97,7 @@ public class AdminController {
     @ApiOperation("功能：查找全部个人信息(备注：管理员使用)")
     @GetMapping("/findAllUser")
     public ResultUtil selectuser(@RequestHeader("token") String token) {
+        log.info("进入查找全部个人信息接口");
         if (!userService.findByToken(token).getUserId().equals(1))
             return ResultUtil.fail(CodeEnum.NO_AUTH.val(), CodeEnum.NO_AUTH.msg());
         return ResultUtil.success(userService.selectuser());
@@ -101,6 +107,7 @@ public class AdminController {
     @ApiOperation("功能：修改订单状态,把未发货改成已发货(备注：管理员使用，需要传入orders的id")
     @PutMapping("/updateOrdersStatus")
     public ResultUtil updateAddress(@RequestParam(value = "id", required = true) Integer id, @RequestHeader("token") String token) {
+        log.info("进入修改订单状态接口");
         if (!userService.findByToken(token).getUserId().equals(1))
             return ResultUtil.fail(CodeEnum.NO_AUTH.val(), CodeEnum.NO_AUTH.msg());
         Orders orders = new Orders();
@@ -115,6 +122,7 @@ public class AdminController {
     @ApiOperation("功能：查找全部订单(备注：管理员使用)")
     @GetMapping("/findAllOrders")
     public ResultUtil selectorder(@RequestHeader("token") String token) {
+        log.info("进入查找全部订单接口");
         if (!userService.findByToken(token).getUserId().equals(1))
             return ResultUtil.fail(CodeEnum.NO_AUTH.val(), CodeEnum.NO_AUTH.msg());
         return ResultUtil.success(orderService.selectorder());
@@ -123,6 +131,7 @@ public class AdminController {
     @ApiOperation("功能：上架商品(备注：管理员使用,name,price,stcok,categoryleveloneId,categoryleveltwoId为必填项,图片必须上传，fileName不用填)")
     @PostMapping("/addProduct")
     public ResultUtil addProduct(Product product, @RequestParam("file") MultipartFile file, @RequestHeader("token") String token) {
+        log.info("进入上架商品接口");
         if (!userService.findByToken(token).getUserId().equals(1))
             return ResultUtil.fail(CodeEnum.NO_AUTH.val(), CodeEnum.NO_AUTH.msg());
         String fileName = file.getOriginalFilename();//获取文件名
@@ -149,6 +158,7 @@ public class AdminController {
     @ApiOperation("功能：下架商品(备注：管理员使用，需要传入product的id)")
     @DeleteMapping("/deleteProductById")
     public ResultUtil deleteProduct(@RequestParam(value = "id", required = true) Integer id, @RequestHeader("token") String token) {
+        log.info("进入下架商品接口");
         if (!userService.findByToken(token).getUserId().equals(1))
             return ResultUtil.fail(CodeEnum.NO_AUTH.val(), CodeEnum.NO_AUTH.msg());
         if (productService.removeById(id))
@@ -160,6 +170,7 @@ public class AdminController {
     @ApiOperation("功能：修改商品信息(备注：管理员使用，需要传入product的id,选择性传入其他信息")
     @PutMapping("/updateProduct")
     public ResultUtil updateAddress(Product product, MultipartFile file, @RequestHeader("token") String token) {
+        log.info("进入修改商品信息接口");
         if (!userService.findByToken(token).getUserId().equals(1))
             return ResultUtil.fail(CodeEnum.NO_AUTH.val(), CodeEnum.NO_AUTH.msg());
         if (file == null) {
@@ -184,7 +195,5 @@ public class AdminController {
         } else {
             return ResultUtil.fail(CodeEnum.FILE_EMPTY.val(), CodeEnum.FILE_EMPTY.msg());
         }
-
-
     }
 }
