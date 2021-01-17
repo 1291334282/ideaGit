@@ -39,17 +39,17 @@ public class PayController {
     Logger log = LoggerFactory.getLogger(PayController.class);
 
     //调完pay接口后，就轮询调用这个接口，一直循环去调，直到获取到值，ajax长轮询（定时）
-    @ApiOperation("功能：调完pay接口后，就轮询调用这个接口，一直循环去调，直到获取到值，ajax长轮询（定时）")
-    @GetMapping("/check")
-    public String check(HttpServletRequest request){
-
-        if(request.getSession().getAttribute("success")!=null){
-            return (String) request.getSession().getAttribute("success");
-        }else{
-            return "500";
-        }
-
-    }
+//    @ApiOperation("功能：调完pay接口后，就轮询调用这个接口，一直循环去调，直到获取到值，ajax长轮询（定时）")
+//    @GetMapping("/check")
+//    public String check(HttpServletRequest request){
+//
+//        if(request.getSession().getAttribute("success")!=null){
+//            return (String) request.getSession().getAttribute("success");
+//        }else{
+//            return "500";
+//        }
+//
+//    }
 
     @ApiOperation("功能：支付，备注：需要传入订单的id")
     @GetMapping("/pay")
@@ -157,7 +157,7 @@ public class PayController {
 
         } else {
             log.info("支付, 验签失败...");
-            request.getSession().setAttribute("success","401");
+//            request.getSession().setAttribute("success","401");
 
 //            return ResultUtil.fail(CodeEnum.PAY_FAIL.val(), CodeEnum.PAY_FAIL.msg());
         }
