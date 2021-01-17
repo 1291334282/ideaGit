@@ -162,8 +162,8 @@ public class PayController {
 //            return ResultUtil.fail(CodeEnum.PAY_FAIL.val(), CodeEnum.PAY_FAIL.msg());
         }
 
-//        response.sendRedirect("http://www.baidu.com?");
-        request.getSession().setAttribute("success","200");
+        response.sendRedirect("http://localhost:8080/common/orderSuccess");
+//        request.getSession().setAttribute("success","200");
         //前后分离形式  直接返回页面 记得加上注解@Response  http://login.calidray.com你要返回的网址，再页面初始化时候让前端调用你其他接口，返回信息
 //        return ResultUtil.success(map, CodeEnum.PAY_SUCCESS.msg(), CodeEnum.PAY_SUCCESS.val());
     }
