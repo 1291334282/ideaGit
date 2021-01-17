@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
@@ -36,6 +37,19 @@ public class PayController {
     @Autowired
     private OrderService orderService;
     Logger log = LoggerFactory.getLogger(PayController.class);
+
+    //调完pay接口后，就轮询调用这个接口，一直循环去调，直到获取到值，ajax长轮询（定时）
+    @ApiOperation("功能：调完pay接口后，就轮询调用这个接口，一直循环去调，直到获取到值，ajax长轮询（定时）")
+    @GetMapping("/check")
+    public String check(HttpServletRequest request){
+
+        if(request.getSession().getAttribute("success")!=null){
+            return (String) request.getSession().getAttribute("success");
+        }else{
+            return "500";
+        }
+
+    }
 
     @ApiOperation("功能：支付，备注：需要传入订单的id")
     @GetMapping("/pay")
@@ -73,7 +87,7 @@ public class PayController {
 
         //请求
         String result = alipayClient.pageExecute(alipayRequest).getBody();
-        System.out.println("===" + result);
+        log.info("=========================" + result);
         return result;
     }
 
@@ -91,7 +105,7 @@ public class PayController {
 //    }
     @ApiOperation("功能：支付成功同步跳转")
     @RequestMapping("alipayReturnNotice")
-    public ResultUtil alipayReturnNotice(HttpServletRequest request, HttpServletRequest response, Map map) throws Exception {
+    public void alipayReturnNotice(HttpServletRequest request, HttpServletResponse response, Map map) throws Exception {
 
         log.info("支付成功, 进入同步通知接口...");
 
@@ -143,11 +157,15 @@ public class PayController {
 
         } else {
             log.info("支付, 验签失败...");
-            return ResultUtil.fail(CodeEnum.PAY_FAIL.val(), CodeEnum.PAY_FAIL.msg());
+            request.getSession().setAttribute("success","401");
+
+//            return ResultUtil.fail(CodeEnum.PAY_FAIL.val(), CodeEnum.PAY_FAIL.msg());
         }
 
+//        response.sendRedirect("http://www.baidu.com?");
+        request.getSession().setAttribute("success","200");
         //前后分离形式  直接返回页面 记得加上注解@Response  http://login.calidray.com你要返回的网址，再页面初始化时候让前端调用你其他接口，返回信息
-        return ResultUtil.success(map, CodeEnum.PAY_SUCCESS.msg(), CodeEnum.PAY_SUCCESS.val());
+//        return ResultUtil.success(map, CodeEnum.PAY_SUCCESS.msg(), CodeEnum.PAY_SUCCESS.val());
     }
 
 

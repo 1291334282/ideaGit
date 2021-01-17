@@ -4,6 +4,8 @@ import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.request.AlipayTradeRefundRequest;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.api.R;
 import com.graduation.config.AlipayConfig;
 import com.graduation.entity.*;
 import com.graduation.enums.CodeEnum;
@@ -21,6 +23,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * <p>
@@ -42,6 +46,22 @@ public class AdminController {
     @Autowired
     private ProductService productService;
     Logger log = LoggerFactory.getLogger(AdminController.class);
+
+    @RequiresRoles({"admin"})
+    @ApiOperation("功能：查询订单状态条数，备注：需要传入token")
+    @GetMapping("/selectCount")
+    public ResultUtil selectCount(@RequestHeader("token") String token) {
+        Map<String,Integer> map=new HashMap<>();
+        Integer count=orderService.selectCount("未支付");
+        Integer count2=orderService.selectCount("未发货");
+        Integer count3=orderService.selectCount("申请退款");
+        Integer count4=orderService.selectCount("已退款");
+        map.put("未支付",count);
+        map.put("未发货",count2);
+        map.put("申请退款",count3);
+        map.put("已退货",count4);
+        return ResultUtil.success(map);
+    }
 
     @RequiresRoles({"admin"})
     @ApiOperation("功能：退款，备注：需要传入订单的id和token")
