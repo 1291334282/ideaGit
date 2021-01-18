@@ -55,11 +55,13 @@ public class AdminController {
         Integer count=orderService.selectCount("未支付");
         Integer count2=orderService.selectCount("未发货");
         Integer count3=orderService.selectCount("申请退款");
-        Integer count4=orderService.selectCount("已退款");
+        Integer count4=orderService.selectCount("已退货");
+        Integer count5=orderService.selectCount("已发货");
         map.put("未支付",count);
         map.put("未发货",count2);
         map.put("申请退款",count3);
         map.put("已退货",count4);
+        map.put("已发货",count5);
         return ResultUtil.success(map);
     }
 
