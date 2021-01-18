@@ -1,5 +1,7 @@
 package com.graduation.config;
 
+import com.graduation.handler.IPHandle;
+
 /**
  * @Description notify_url 和 return_url 需要外网可以访问，建议natapp 内网穿透
  * @Date 2020-10-29 15:02
@@ -8,7 +10,8 @@ package com.graduation.config;
 public class AlipayConfig {
     //这里用natapp内外网穿透
 //    public static final String natUrl = "http://gca8w8.natappfree.cc";
-    public static final String natUrl = "http://localhost:9000";//本地用
+//    public static final String natUrl = "http://localhost:9000";//本地用
+    public static final String natUrl = "http://"+ IPHandle.getIp() +":9000";//本地用
 //    public static final String natUrl = "http://8.131.110.2:9000";//阿里云用
     // 应用ID,您的APPID，收款账号既是您的APPID对应支付宝账号
     public static String app_id = "2021000116695211";
