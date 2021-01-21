@@ -51,17 +51,17 @@ public class AdminController {
     @ApiOperation("功能：查询订单状态条数，备注：需要传入token")
     @GetMapping("/selectCount")
     public ResultUtil selectCount(@RequestHeader("token") String token) {
-        Map<String,Integer> map=new HashMap<>();
-        Integer count=orderService.selectCount("未支付");
-        Integer count2=orderService.selectCount("未发货");
-        Integer count3=orderService.selectCount("申请退款");
-        Integer count4=orderService.selectCount("已退货");
-        Integer count5=orderService.selectCount("已发货");
-        map.put("未支付",count);
-        map.put("未发货",count2);
-        map.put("申请退款",count3);
-        map.put("已退货",count4);
-        map.put("已发货",count5);
+        Map<String, Integer> map = new HashMap<>();
+        Integer count = orderService.selectCount("未支付");
+        Integer count2 = orderService.selectCount("未发货");
+        Integer count3 = orderService.selectCount("申请退款");
+        Integer count4 = orderService.selectCount("已退货");
+        Integer count5 = orderService.selectCount("已发货");
+        map.put("未支付", count);
+        map.put("未发货", count2);
+        map.put("申请退款", count3);
+        map.put("已退货", count4);
+        map.put("已发货", count5);
         return ResultUtil.success(map);
     }
 
@@ -150,30 +150,42 @@ public class AdminController {
         return ResultUtil.success(orderService.selectorder());
     }
 
-    @ApiOperation("功能：上架商品(备注：管理员使用,name,price,stcok,categoryleveloneId,categoryleveltwoId为必填项,图片必须上传，fileName不用填)")
-    @PostMapping("/addProduct")
-    public ResultUtil addProduct(Product product, @RequestParam("file") MultipartFile file, @RequestHeader("token") String token) {
-        log.info("进入上架商品接口");
+    @ApiOperation("功能：上传商品图片(备注：管理员使用,图片必须上传")
+    @PostMapping("/addProductPicture")
+    public ResultUtil addProductPicture(@RequestParam("file") MultipartFile file, @RequestHeader("token") String token, @RequestParam(value = "id", required = true) Integer id) {
+        log.info("进入上架商品图片接口");
         if (!userService.findByToken(token).getUserId().equals(1))
             return ResultUtil.fail(CodeEnum.NO_AUTH.val(), CodeEnum.NO_AUTH.msg());
         String fileName = file.getOriginalFilename();//获取文件名
         String filepath = FileUtil.getUploadPath();
+        Product product = productService.getById(id);
         if (!file.isEmpty()) {
             try (BufferedOutputStream out = new BufferedOutputStream(
                     new FileOutputStream(new File(filepath + File.separator + fileName)))) {
                 out.write(file.getBytes());
                 out.flush();
                 product.setFileName(fileName);
-                productService.save(product);
-                return ResultUtil.success(fileName, CodeEnum.ADD_SUCCESS.msg(), CodeEnum.ADD_SUCCESS.val());
+                productService.updateById(product);
+                return ResultUtil.success(fileName, CodeEnum.UPDATE_SUCCESS.msg(), CodeEnum.ADD_SUCCESS.val());
             } catch (FileNotFoundException e) {
-                return ResultUtil.fail(CodeEnum.ADD_FAIL.val(), CodeEnum.ADD_FAIL.msg());
+                return ResultUtil.fail(CodeEnum.UPDATE_FAIL.val(), CodeEnum.UPDATE_FAIL.msg());
             } catch (IOException e) {
-                return ResultUtil.fail(CodeEnum.ADD_FAIL.val(), CodeEnum.ADD_FAIL.msg());
+                return ResultUtil.fail(CodeEnum.UPDATE_FAIL.val(), CodeEnum.UPDATE_FAIL.msg());
             }
         } else {
             return ResultUtil.fail(CodeEnum.FILE_EMPTY.val(), CodeEnum.FILE_EMPTY.msg());
         }
+    }
+
+    @ApiOperation("功能：上架商品(备注：管理员使用,name,price,stcok,categoryleveloneId,categoryleveltwoId为必填项，fileName不用填)")
+    @PostMapping("/addProduct")
+    public ResultUtil addProduct(Product product, @RequestHeader("token") String token) {
+        log.info("进入上架商品接口");
+        if (!userService.findByToken(token).getUserId().equals(1))
+            return ResultUtil.fail(CodeEnum.NO_AUTH.val(), CodeEnum.NO_AUTH.msg());
+        if (productService.save(product))
+            return ResultUtil.success(null, CodeEnum.ADD_SUCCESS.msg(), CodeEnum.ADD_SUCCESS.val());
+        return ResultUtil.fail(CodeEnum.ADD_FAIL.val(), CodeEnum.ADD_FAIL.msg());
     }
 
     @RequiresRoles({"admin"})
