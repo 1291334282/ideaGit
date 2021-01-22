@@ -22,4 +22,6 @@ public interface OrderService extends IService<Orders> {
     public List<Orders> selectorderbyuserid(Integer userID);
 
     public Integer selectCount(String status);
+
+    public List<Orders> selectByStatus(String status);
 }

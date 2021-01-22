@@ -75,4 +75,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
         queryWrapper.eq("status",status);
         return orderMapper.selectCount(queryWrapper);
     }
+
+    @Override
+    public List<Orders> selectByStatus(String status) {
+        QueryWrapper<Orders> queryWrapper=new QueryWrapper<>();
+        queryWrapper.eq("status",status);
+        return orderMapper.selectList(queryWrapper);
+    }
 }

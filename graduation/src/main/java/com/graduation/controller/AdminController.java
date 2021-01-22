@@ -66,6 +66,15 @@ public class AdminController {
     }
 
     @RequiresRoles({"admin"})
+    @ApiOperation("功能：查询订单状态条数，备注：需要传入token")
+    @GetMapping("/selectByStatus")
+    public ResultUtil selectBystatus(@RequestHeader("token") String token,@RequestParam(value = "status", required = true) String status) {
+        if (!userService.findByToken(token).getUserId().equals(1))
+            return ResultUtil.fail(CodeEnum.NO_AUTH.val(), CodeEnum.NO_AUTH.msg());
+        return ResultUtil.success(orderService.selectByStatus(status));
+    }
+
+    @RequiresRoles({"admin"})
     @ApiOperation("功能：退款，备注：需要传入订单的id和token")
     @GetMapping("/payback")
     public ResultUtil payback(@RequestParam(value = "id", required = true) Integer id, @RequestHeader("token") String token) throws AlipayApiException {
