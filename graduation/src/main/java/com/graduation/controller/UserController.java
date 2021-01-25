@@ -44,6 +44,7 @@ public class UserController {
     private UserService userService;
     Logger log = LoggerFactory.getLogger(UserController.class);
 
+    @ApiOperation("功能：获取验证码(备注：无需传参)")
     @GetMapping("/getcode")
     public void getCode(HttpServletResponse response, HttpServletRequest request) throws Exception {
         log.info("进入获取验证码接口");
@@ -53,7 +54,7 @@ public class UserController {
         Object[] objs = VerifyUtil.createImage();
         //将验证码存入Session
         session.setAttribute("imageCode", objs[0]);
-        log.info("验证码："+objs[0]);
+        log.info("验证码：" + objs[0]);
         //将图片输出给浏览器
         BufferedImage image = (BufferedImage) objs[1];
         response.setContentType("image/png");
@@ -61,9 +62,9 @@ public class UserController {
         ImageIO.write(image, "png", os);
     }
 
-    @ApiOperation("功能：登录(备注：传入用户名loginName，密码password)")
+    @ApiOperation("功能：登录(备注：传入用户名loginName，密码password，验证码code)")
     @PostMapping(value = "/login")
-    public ResultUtil login(@RequestParam(value = "code", required = true) String code, HttpServletResponse response, HttpServletRequest request, @RequestParam(value = "loginName", required = true) String loginName, @RequestParam(value = "password", required = true) String password) {
+    public ResultUtil login(HttpServletResponse response, HttpServletRequest request, @RequestParam(value = "loginName", required = true) String loginName, @RequestParam(value = "password", required = true) String password, @RequestParam(value = "code", required = true) String code) {
         log.info("进入登录接口");
         HttpSession session = request.getSession();
         if (session.getAttribute("imageCode") == null)
