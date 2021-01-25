@@ -48,6 +48,7 @@ public class ShiroConfiguration {
         filterMap.put("/druid/**", "anon");
         filterMap.put("/user/login", "anon");
         filterMap.put("/user/register", "anon");
+        filterMap.put("/user/getcode", "anon");
         filterMap.put("/static/**", "anon");
         filterMap.put("/img/**", "anon");
         filterMap.put("/productCategory/*", "anon");

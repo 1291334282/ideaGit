@@ -6,6 +6,7 @@ import com.graduation.entity.ResultUtil;
 import com.graduation.entity.User;
 import com.graduation.enums.CodeEnum;
 import com.graduation.handler.FileUtil;
+import com.graduation.handler.VerifyUtil;
 import com.graduation.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -18,8 +19,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.awt.image.BufferedImage;
 import java.io.*;
 
 
@@ -40,10 +44,30 @@ public class UserController {
     private UserService userService;
     Logger log = LoggerFactory.getLogger(UserController.class);
 
+    @GetMapping("/getcode")
+    public void getCode(HttpServletResponse response, HttpServletRequest request) throws Exception {
+        log.info("进入获取验证码接口");
+        HttpSession session = request.getSession();
+        //利用图片工具生成图片
+        //第一个参数是生成的验证码，第二个参数是生成的图片
+        Object[] objs = VerifyUtil.createImage();
+        //将验证码存入Session
+        session.setAttribute("imageCode", objs[0]);
+        log.info("验证码："+objs[0]);
+        //将图片输出给浏览器
+        BufferedImage image = (BufferedImage) objs[1];
+        response.setContentType("image/png");
+        OutputStream os = response.getOutputStream();
+        ImageIO.write(image, "png", os);
+    }
+
     @ApiOperation("功能：登录(备注：传入用户名loginName，密码password)")
     @PostMapping(value = "/login")
-    public ResultUtil login(@RequestParam(value = "loginName", required = true) String loginName, @RequestParam(value = "password", required = true) String password) {
+    public ResultUtil login(@RequestParam(value = "code", required = true) String code, HttpServletResponse response, HttpServletRequest request, @RequestParam(value = "loginName", required = true) String loginName, @RequestParam(value = "password", required = true) String password) {
         log.info("进入登录接口");
+        HttpSession session = request.getSession();
+        if (session.getAttribute("imageCode") == null)
+            return ResultUtil.fail(CodeEnum.CODE_NULL.val(), CodeEnum.CODE_NULL.msg());
         QueryWrapper queryWrapper = new QueryWrapper();
         queryWrapper.eq("login_name", loginName);
         User user = userService.getOne(queryWrapper);
@@ -51,6 +75,8 @@ public class UserController {
             return ResultUtil.fail(CodeEnum.USER_NOT_EXIST.val(), CodeEnum.USER_NOT_EXIST.msg());
         } else if (!user.getPassword().equals(password)) {
             return ResultUtil.fail(CodeEnum.PASSWORD_FAIL.val(), CodeEnum.PASSWORD_FAIL.msg());
+        } else if (!session.getAttribute("imageCode").toString().equalsIgnoreCase(code)) {
+            return ResultUtil.fail(CodeEnum.CODE_FAIL.val(), CodeEnum.CODE_FAIL.msg());
         } else {
             //生成token，并保存到数据库
             return ResultUtil.success(userService.createToken(user.getId()), "登陆成功", "200");
