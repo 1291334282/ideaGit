@@ -64,21 +64,24 @@ public class UserController {
 
     @ApiOperation("功能：登录(备注：传入用户名loginName，密码password，验证码code)")
     @PostMapping(value = "/login")
-    public ResultUtil login(HttpServletResponse response, HttpServletRequest request, @RequestParam(value = "loginName", required = true) String loginName, @RequestParam(value = "password", required = true) String password, @RequestParam(value = "code", required = true) String code) {
+    public ResultUtil login( @RequestParam(value = "loginName", required = true) String loginName, @RequestParam(value = "password", required = true) String password) {
+//        HttpServletResponse response, HttpServletRequest request,, @RequestParam(value = "code", required = true) String code
         log.info("进入登录接口");
-        HttpSession session = request.getSession();
-        if (session.getAttribute("imageCode") == null)
-            return ResultUtil.fail(CodeEnum.CODE_NULL.val(), CodeEnum.CODE_NULL.msg());
+//        HttpSession session = request.getSession();
+//        log.info(session.getAttribute("imageCode"));
+//        if (session.getAttribute("imageCode") == null)
+//            return ResultUtil.fail(CodeEnum.CODE_NULL.val(), CodeEnum.CODE_NULL.msg());
         QueryWrapper queryWrapper = new QueryWrapper();
         queryWrapper.eq("login_name", loginName);
         User user = userService.getOne(queryWrapper);
         if (user == null) {
             return ResultUtil.fail(CodeEnum.USER_NOT_EXIST.val(), CodeEnum.USER_NOT_EXIST.msg());
         } else if (!user.getPassword().equals(password)) {
-            return ResultUtil.fail(CodeEnum.PASSWORD_FAIL.val(), CodeEnum.PASSWORD_FAIL.msg());
-        } else if (!session.getAttribute("imageCode").toString().equalsIgnoreCase(code)) {
-            return ResultUtil.fail(CodeEnum.CODE_FAIL.val(), CodeEnum.CODE_FAIL.msg());
-        } else {
+            return ResultUtil.fail(CodeEnum.PASSWORD_FAIL.val(), CodeEnum.PASSWORD_FAIL.msg());}
+//         else if (!session.getAttribute("imageCode").toString().equalsIgnoreCase(code)) {
+//            return ResultUtil.fail(CodeEnum.CODE_FAIL.val(), CodeEnum.CODE_FAIL.msg());
+//        }
+        else {
             //生成token，并保存到数据库
             return ResultUtil.success(userService.createToken(user.getId()), "登陆成功", "200");
         }
