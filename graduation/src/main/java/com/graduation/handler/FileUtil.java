@@ -17,17 +17,6 @@ import java.io.FileOutputStream;
  */
 public class FileUtil {
     public static String getUploadPath() {
-//        File path = null;
-//        try {
-//            path = new File(ResourceUtils.getURL("classpath:").getPath());
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//        if (!path.exists()) path = new File("");
-//        File upload = new File(path.getAbsolutePath(), "static/img/");
-//        if (!upload.exists()) upload.mkdirs();
-//        System.out.println(upload.getAbsolutePath());
-//        return upload.getAbsolutePath();
         String path = "C:\\img";//本地用
 //        String path="/root/img";//阿里云用
         return path;

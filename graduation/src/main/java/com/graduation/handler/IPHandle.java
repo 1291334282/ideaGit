@@ -71,8 +71,6 @@ public class IPHandle {
                 }
             }
         }
-
-
         Pattern p = Pattern.compile("\\<dd class\\=\"fz24\">(.*?)\\<\\/dd>");
         Matcher m = p.matcher(inputLine.toString());
         if (m.find()) {

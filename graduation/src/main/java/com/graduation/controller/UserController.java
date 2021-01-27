@@ -10,21 +10,19 @@ import com.graduation.handler.VerifyUtil;
 import com.graduation.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-
-import org.apache.shiro.crypto.hash.SimpleHash;
-import org.apache.shiro.util.ByteSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -42,7 +40,11 @@ import java.io.*;
 public class UserController {
     @Autowired
     private UserService userService;
+
     Logger log = LoggerFactory.getLogger(UserController.class);
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @ApiOperation("功能：获取验证码(备注：无需传参)")
     @GetMapping("/getcode")
@@ -52,9 +54,8 @@ public class UserController {
         //利用图片工具生成图片
         //第一个参数是生成的验证码，第二个参数是生成的图片
         Object[] objs = VerifyUtil.createImage();
-        //将验证码存入Session
-        session.setAttribute("imageCode", objs[0]);
-        log.info("验证码：" + objs[0]);
+        redisTemplate.opsForValue().set("code", objs[0], 90, TimeUnit.SECONDS);
+        log.info(objs[0].toString());
         //将图片输出给浏览器
         BufferedImage image = (BufferedImage) objs[1];
         response.setContentType("image/png");
@@ -64,24 +65,20 @@ public class UserController {
 
     @ApiOperation("功能：登录(备注：传入用户名loginName，密码password，验证码code)")
     @PostMapping(value = "/login")
-    public ResultUtil login( @RequestParam(value = "loginName", required = true) String loginName, @RequestParam(value = "password", required = true) String password) {
-//        HttpServletResponse response, HttpServletRequest request,, @RequestParam(value = "code", required = true) String code
+    public ResultUtil login(HttpServletResponse response, HttpServletRequest request, @RequestParam(value = "code", required = true) String code, @RequestParam(value = "loginName", required = true) String loginName, @RequestParam(value = "password", required = true) String password) {
         log.info("进入登录接口");
-//        HttpSession session = request.getSession();
-//        log.info(session.getAttribute("imageCode"));
-//        if (session.getAttribute("imageCode") == null)
-//            return ResultUtil.fail(CodeEnum.CODE_NULL.val(), CodeEnum.CODE_NULL.msg());
+        if (redisTemplate.opsForValue().get("code") == null)
+            return ResultUtil.fail(CodeEnum.CODE_NULL.val(), CodeEnum.CODE_NULL.msg());
         QueryWrapper queryWrapper = new QueryWrapper();
         queryWrapper.eq("login_name", loginName);
         User user = userService.getOne(queryWrapper);
         if (user == null) {
             return ResultUtil.fail(CodeEnum.USER_NOT_EXIST.val(), CodeEnum.USER_NOT_EXIST.msg());
         } else if (!user.getPassword().equals(password)) {
-            return ResultUtil.fail(CodeEnum.PASSWORD_FAIL.val(), CodeEnum.PASSWORD_FAIL.msg());}
-//         else if (!session.getAttribute("imageCode").toString().equalsIgnoreCase(code)) {
-//            return ResultUtil.fail(CodeEnum.CODE_FAIL.val(), CodeEnum.CODE_FAIL.msg());
-//        }
-        else {
+            return ResultUtil.fail(CodeEnum.PASSWORD_FAIL.val(), CodeEnum.PASSWORD_FAIL.msg());
+        } else if (!redisTemplate.opsForValue().get("code").toString().equalsIgnoreCase(code)) {
+            return ResultUtil.fail(CodeEnum.CODE_FAIL.val(), CodeEnum.CODE_FAIL.msg());
+        } else {
             //生成token，并保存到数据库
             return ResultUtil.success(userService.createToken(user.getId()), "登陆成功", "200");
         }

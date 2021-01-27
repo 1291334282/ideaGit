@@ -41,7 +41,7 @@ public enum CodeEnum {
     LOGIN_IS_LATE("517","登录凭证已失效，请重新登录"),
     PAYBACK_FAIL("518", "退款失败"),
     PAY_FAIL("519", "支付失败"),
-    CODE_NULL("520", "请先获取验证码"),
+    CODE_NULL("520", "验证码已过期"),
     CODE_FAIL("521", "验证码错误")
     ;
 
