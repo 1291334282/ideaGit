@@ -6,8 +6,8 @@ import com.graduation.entity.ResultUtil;
 import com.graduation.entity.User;
 import com.graduation.enums.CodeEnum;
 import com.graduation.handler.FileUtil;
-import com.graduation.handler.VerifyUtil;
 import com.graduation.service.UserService;
+import com.wf.captcha.ArithmeticCaptcha;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
@@ -16,11 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import javax.imageio.ImageIO;
+
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.concurrent.TimeUnit;
 
@@ -48,19 +47,26 @@ public class UserController {
 
     @ApiOperation("功能：获取验证码(备注：无需传参)")
     @GetMapping("/getcode")
-    public void getCode(HttpServletResponse response, HttpServletRequest request) throws Exception {
+    public void getCode(HttpServletResponse response) throws Exception {
         log.info("进入获取验证码接口");
-        HttpSession session = request.getSession();
-        //利用图片工具生成图片
-        //第一个参数是生成的验证码，第二个参数是生成的图片
-        Object[] objs = VerifyUtil.createImage();
-        redisTemplate.opsForValue().set("code", objs[0], 90, TimeUnit.SECONDS);
-        log.info(objs[0].toString());
-        //将图片输出给浏览器
-        BufferedImage image = (BufferedImage) objs[1];
-        response.setContentType("image/png");
-        OutputStream os = response.getOutputStream();
-        ImageIO.write(image, "png", os);
+        ServletOutputStream outputStream = response.getOutputStream();
+        //算术验证码 数字加减乘除. 建议2位运算就行:captcha.setLen(2);
+        ArithmeticCaptcha captcha = new ArithmeticCaptcha(120, 40);
+        // 中文验证码
+//        ChineseCaptcha captcha = new ChineseCaptcha(120, 40);
+        // 英文与数字验证码
+//        SpecCaptcha captcha = new SpecCaptcha(120, 40);
+        //英文与数字动态验证码
+//        GifCaptcha captcha = new GifCaptcha(120, 40);
+        // 中文动态验证码
+//        ChineseGifCaptcha captcha = new ChineseGifCaptcha(120, 40);
+        // 几位数运算，默认是两位
+        captcha.setLen(2);
+        // 获取运算的结果
+        String result = captcha.text();
+        log.info(result);
+        redisTemplate.opsForValue().set("code", result, 90, TimeUnit.SECONDS);
+        captcha.out(outputStream);
     }
 
     @ApiOperation("功能：登录(备注：传入用户名loginName，密码password，验证码code)")
