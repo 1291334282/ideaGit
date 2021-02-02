@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.graduation.entity.OrderDetail;
 import com.graduation.entity.Product;
 import com.graduation.mapper.OrderDetailMapper;
+import com.graduation.mapper.OrderMapper;
 import com.graduation.mapper.ProductMapper;
 import com.graduation.service.OrderDetailService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -32,6 +33,9 @@ public class OrderDetailServiceImpl extends ServiceImpl<OrderDetailMapper, Order
     @Autowired
     private ProductMapper productMapper;
 
+    @Autowired
+    private OrderMapper orderMapper;
+
     @Override
     public List<OrderDetailVO> selestOrderDetail(Integer id) {
         QueryWrapper wrapper = new QueryWrapper();
@@ -44,6 +48,9 @@ public class OrderDetailServiceImpl extends ServiceImpl<OrderDetailMapper, Order
             queryWrapper.eq("id", orderDetail1.getProductId());
             BeanUtils.copyProperties(orderDetail1, orderDetailVOS);
             orderDetailVOS.setProducts(productMapper.selectList(queryWrapper));
+            QueryWrapper queryWrapper2 = new QueryWrapper();
+            queryWrapper2.eq("id", id);
+            orderDetailVOS.setOrders(orderMapper.selectList(queryWrapper2));
             list.add(orderDetailVOS);
         }
         return list;

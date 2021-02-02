@@ -1,5 +1,6 @@
 package com.graduation.vo;
 
+import com.graduation.entity.Orders;
 import com.graduation.entity.Product;
 import lombok.Data;
 
@@ -8,7 +9,7 @@ import java.util.List;
 public class OrderDetailVO {
     private Integer id;
 
-    private Integer orderId;
+    private List<Orders> orders;
 
     private List<Product> products;
 

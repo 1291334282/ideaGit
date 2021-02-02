@@ -41,13 +41,6 @@ public class OrderDetailController {
 
     Logger log = LoggerFactory.getLogger(OrderDetailController.class);
 
-    @ApiOperation("功能：查找对应订单的全部商品信息,备注（需要传入token,订单id）")
-    @GetMapping("/findOrdersDetail")
-    public ResultUtil selectorderDetail(@RequestHeader("token") String token, @RequestParam(value = "id", required = true) Integer id) {
-        log.info("进入查找对应订单接口");
-        return ResultUtil.success(orderDetailService.selestOrderDetail(id));
-    }
-
     @ApiOperation("功能：查找对应登录人的全部订单详情,备注（需要传入token）")
     @GetMapping("/findOrdersAll")
     public ResultUtil selectorderAll(@RequestHeader("token") String token) {
