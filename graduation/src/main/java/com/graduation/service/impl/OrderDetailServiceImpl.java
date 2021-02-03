@@ -41,9 +41,10 @@ public class OrderDetailServiceImpl extends ServiceImpl<OrderDetailMapper, Order
         QueryWrapper wrapper = new QueryWrapper();
         wrapper.eq("order_id", id);
         List<OrderDetail> orderDetail = orderDetailMapper.selectList(wrapper);
-        OrderDetailVO orderDetailVOS = new OrderDetailVO();
+
         List<OrderDetailVO> list = new ArrayList<>();
         for (OrderDetail orderDetail1 : orderDetail) {
+            OrderDetailVO orderDetailVOS = new OrderDetailVO();
             QueryWrapper queryWrapper = new QueryWrapper();
             queryWrapper.eq("id", orderDetail1.getProductId());
             BeanUtils.copyProperties(orderDetail1, orderDetailVOS);
@@ -52,7 +53,11 @@ public class OrderDetailServiceImpl extends ServiceImpl<OrderDetailMapper, Order
             queryWrapper2.eq("id", id);
             orderDetailVOS.setOrders(orderMapper.selectList(queryWrapper2));
             list.add(orderDetailVOS);
+
+            System.out.println(orderDetailVOS);
+            System.out.println(list);
         }
+        System.out.println(list);
         return list;
     }
 }
