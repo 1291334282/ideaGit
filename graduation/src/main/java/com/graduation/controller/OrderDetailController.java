@@ -56,8 +56,15 @@ public class OrderDetailController {
     @ApiOperation("功能：查找订单id对应的订单的详细信息,备注（需要传入token，订单的id号，不是订单号哦）")
     @GetMapping("/findOrdersById")
     public ResultUtil selectorderById(@RequestHeader("token") String token,@RequestParam(value = "id", required = true) Integer id) {
-        log.info("进入查找订单id对应的订单的详细信息");
+        log.info("进入查找订单id对应的订单的详细信息的接口");
         return ResultUtil.success(orderDetailService.selestOrderDetail(id));
+    }
+
+    @ApiOperation("功能：根据商品名称或描述模糊查询订单的详细信息,备注（需要传入token，name）")
+    @GetMapping("/findOrdersByNumber")
+    public ResultUtil selectorderByNumber(@RequestHeader("token") String token,@RequestParam(value = "name", required = true) String name) {
+        log.info("进入根据商品名称或描述模糊查询订单的接口");
+        return ResultUtil.success(orderDetailService.selestOrderByName(name));
     }
 }
 
