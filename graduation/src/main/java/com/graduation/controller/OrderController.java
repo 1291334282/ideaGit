@@ -93,5 +93,13 @@ public class OrderController {
         return ResultUtil.fail(CodeEnum.UPDATE_FAIL.val(), CodeEnum.UPDATE_FAIL.msg());
 
     }
+
+    @ApiOperation("功能：删除订单，备注：需要传入订单的id和token")
+    @DeleteMapping("/deleteOrder")
+    public ResultUtil deleteOrder(@RequestParam(value = "id", required = true) Integer id, @RequestHeader("token") String token) {
+        log.info("进入删除订单接口");
+        orderService.deleteOrder(id);
+        return ResultUtil.success(null, "删除成功", "200");
+    }
 }
 

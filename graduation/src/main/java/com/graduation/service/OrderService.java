@@ -24,4 +24,6 @@ public interface OrderService extends IService<Orders> {
     public Integer selectCount(String status);
 
     public List<Orders> selectByStatus(String status);
+
+    public boolean deleteOrder(Integer id);
 }

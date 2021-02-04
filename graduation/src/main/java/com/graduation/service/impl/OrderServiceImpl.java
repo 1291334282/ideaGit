@@ -82,4 +82,13 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
         queryWrapper.eq("status",status);
         return orderMapper.selectList(queryWrapper);
     }
+
+    @Override
+    public boolean deleteOrder(Integer id) {
+        orderMapper.deleteById(id);
+        QueryWrapper queryWrapper=new QueryWrapper();
+        queryWrapper.eq("order_id",id);
+        orderDetailMapper.delete(queryWrapper);
+        return true;
+    }
 }
