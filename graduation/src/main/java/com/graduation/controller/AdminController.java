@@ -51,6 +51,8 @@ public class AdminController {
     @ApiOperation("功能：查询订单状态条数，备注：需要传入token")
     @GetMapping("/selectCount")
     public ResultUtil selectCount(@RequestHeader("token") String token) {
+        if (!userService.findByToken(token).getUserId().equals(1))
+            return ResultUtil.fail(CodeEnum.NO_AUTH.val(), CodeEnum.NO_AUTH.msg());
         Map<String, Integer> map = new HashMap<>();
         Integer count = orderService.selectCount("未支付");
         Integer count2 = orderService.selectCount("未发货");
@@ -63,6 +65,20 @@ public class AdminController {
         map.put("已退货", count4);
         map.put("已发货", count5);
         return ResultUtil.success(map);
+    }
+
+    @RequiresRoles({"admin"})
+    @ApiOperation("功能：修改订单地址，备注：需要传入token")
+    @PutMapping("/updateOrderAddress")
+    public ResultUtil updateOrderAddress(@RequestHeader("token") String token,@RequestParam(value = "id", required = true) Integer id,@RequestParam(value = "address", required = true) String address) {
+        if (!userService.findByToken(token).getUserId().equals(1))
+            return ResultUtil.fail(CodeEnum.NO_AUTH.val(), CodeEnum.NO_AUTH.msg());
+        Orders orders = new Orders();
+        orders.setId(id);
+        orders.setUserAddress(address);
+        if (orderService.updateById(orders))
+            return ResultUtil.success(null, CodeEnum.UPDATE_SUCCESS.msg(), CodeEnum.UPDATE_SUCCESS.val());
+        return ResultUtil.fail(CodeEnum.UPDATE_FAIL.val(), CodeEnum.UPDATE_FAIL.msg());
     }
 
     @RequiresRoles({"admin"})
