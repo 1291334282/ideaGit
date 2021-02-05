@@ -72,14 +72,13 @@ public class UserAddressController {
         log.info("进入添加地址接口");
         userAddress.setUserId(userService.findByToken(token).getUserId());
         if (userAddress.getDefaultAddress() == 1) {
-            List<UserAddress> list = userAddressService.list(
+            UserAddress list = userAddressService.getOne(
                     new QueryWrapper<UserAddress>()
                             .eq("default_address", userAddress.getDefaultAddress())
                             .eq("user_id", userService.findByToken(token).getUserId()));
-            if (!list.isEmpty()) {
-                for (UserAddress address : list) {
-                    return ResultUtil.success(address.getId(),"已经有默认地址了","500");
-                }
+            if (list!=null) {
+                list.setDefaultAddress(0);
+                userAddressService.updateById(list);
             }
         }
         if (userAddressService.save(userAddress))
