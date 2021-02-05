@@ -2,6 +2,7 @@ package com.graduation.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.graduation.entity.Cart;
 import com.graduation.entity.ResultUtil;
 import com.graduation.entity.User;
 import com.graduation.entity.UserAddress;
@@ -14,6 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * <p>
@@ -68,6 +71,17 @@ public class UserAddressController {
     public ResultUtil addAddress(UserAddress userAddress, @RequestHeader("token") String token) {
         log.info("进入添加地址接口");
         userAddress.setUserId(userService.findByToken(token).getUserId());
+        if (userAddress.getDefaultAddress() == 1) {
+            List<UserAddress> list = userAddressService.list(
+                    new QueryWrapper<UserAddress>()
+                            .eq("default_address", userAddress.getDefaultAddress())
+                            .eq("user_id", userService.findByToken(token).getUserId()));
+            if (!list.isEmpty()) {
+                for (UserAddress address : list) {
+                    return ResultUtil.success(address.getId(),"已经有默认地址了","500");
+                }
+            }
+        }
         if (userAddressService.save(userAddress))
             return ResultUtil.success(null, CodeEnum.ADD_SUCCESS.msg(), CodeEnum.ADD_SUCCESS.val());
         return ResultUtil.fail(CodeEnum.ADD_FAIL.val(), CodeEnum.ADD_FAIL.msg());

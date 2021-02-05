@@ -51,6 +51,9 @@ public class UserAddress implements Serializable {
     @ApiModelProperty(value = "收件人电话")
     private String phone;
 
+    @ApiModelProperty(value = "是否为默认地址，1为默认，0不是默认")
+    private Integer defaultAddress;
+
     @ApiModelProperty(value = "创建时间")
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
