@@ -114,5 +114,16 @@ public class CartController {
         }
         return ResultUtil.fail(CodeEnum.UPDATE_FAIL.val(), CodeEnum.UPDATE_FAIL.msg());
     }
+
+    @ApiOperation("功能：清空购物车，备注：需要传入token")
+    @DeleteMapping("/deleteCart")
+    public ResultUtil deleteCart(@RequestHeader("token") String token) {
+        log.info("进入清空购物车接口");
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.eq("user_id", userService.findByToken(token).getUserId());
+        if (cartService.remove(queryWrapper))
+            return ResultUtil.success(null, CodeEnum.DELETE_SUCCESS.msg(), CodeEnum.DELETE_SUCCESS.val());
+        return  ResultUtil.fail(CodeEnum.DELETE_FAIL.val(), CodeEnum.DELETE_FAIL.msg());
+    }
 }
 
