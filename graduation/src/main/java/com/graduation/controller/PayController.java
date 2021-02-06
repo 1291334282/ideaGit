@@ -3,9 +3,11 @@ package com.graduation.controller;
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
+import com.alipay.api.domain.AlipayTradeWapPayModel;
 import com.alipay.api.internal.util.AlipaySignature;
 import com.alipay.api.request.AlipayTradePagePayRequest;
 import com.alipay.api.request.AlipayTradeRefundRequest;
+import com.alipay.api.request.AlipayTradeWapPayRequest;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.graduation.config.AlipayConfig;
 import com.graduation.config.AlipayMobileConfig;
@@ -212,7 +214,7 @@ public class PayController {
         AlipayClient alipayClient = new DefaultAlipayClient(AlipayMobileConfig.gatewayUrl, AlipayMobileConfig.app_id, AlipayMobileConfig.merchant_private_key, "json", AlipayMobileConfig.charset, AlipayMobileConfig.alipay_public_key, AlipayMobileConfig.sign_type);
 
         //设置请求参数
-        AlipayTradePagePayRequest alipayRequest = new AlipayTradePagePayRequest();
+        AlipayTradeWapPayRequest alipayRequest = new AlipayTradeWapPayRequest();
         alipayRequest.setReturnUrl(AlipayMobileConfig.return_url);
         alipayRequest.setNotifyUrl(AlipayMobileConfig.notify_url);
         if (!order.getStatus().equals("未支付")) return "该订单已支付";
@@ -295,7 +297,7 @@ public class PayController {
             log.info("支付, 验签失败...");
 //            return ResultUtil.fail(CodeEnum.PAY_FAIL.val(), CodeEnum.PAY_FAIL.msg());
         }
-
+//        response.sendRedirect("http://www.baidu.com");
         response.sendRedirect("http://localhost:8081/common/paySuccess");
         //前后分离形式  直接返回页面 记得加上注解@Response  http://login.calidray.com你要返回的网址，再页面初始化时候让前端调用你其他接口，返回信息
 //        return ResultUtil.success(map, CodeEnum.PAY_SUCCESS.msg(), CodeEnum.PAY_SUCCESS.val());
