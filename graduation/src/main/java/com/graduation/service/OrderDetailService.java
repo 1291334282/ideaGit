@@ -19,5 +19,5 @@ import java.util.List;
 public interface OrderDetailService extends IService<OrderDetail> {
     public List<OrderDetailVO> selestOrderDetail(Integer id);
 
-    public List<OrderByNameVO> selestOrderByName(String name);
+    public List<OrderByNameVO> selestOrderByName(String name,Integer id);
 }

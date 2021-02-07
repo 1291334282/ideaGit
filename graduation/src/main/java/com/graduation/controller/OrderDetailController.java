@@ -64,7 +64,7 @@ public class OrderDetailController {
     @GetMapping("/findOrdersByNumber")
     public ResultUtil selectorderByNumber(@RequestHeader("token") String token,@RequestParam(value = "name", required = true) String name) {
         log.info("进入根据商品名称或描述模糊查询订单的接口");
-        return ResultUtil.success(orderDetailService.selestOrderByName(name));
+        return ResultUtil.success(orderDetailService.selestOrderByName(name,userService.findByToken(token).getUserId()));
     }
 }
 

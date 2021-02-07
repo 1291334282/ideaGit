@@ -66,7 +66,7 @@ public class OrderDetailServiceImpl extends ServiceImpl<OrderDetailMapper, Order
     }
 
     @Override
-    public List<OrderByNameVO> selestOrderByName(String name) {
+    public List<OrderByNameVO> selestOrderByName(String name, Integer id) {
         List<Product> products = productService.findProductByname(name);
         List<OrderByNameVO> list = new ArrayList<>();
         for (Product product : products) {
@@ -77,7 +77,10 @@ public class OrderDetailServiceImpl extends ServiceImpl<OrderDetailMapper, Order
                 OrderByNameVO orderByNameVO = new OrderByNameVO();
                 BeanUtils.copyProperties(detail, orderByNameVO);
                 orderByNameVO.setProduct(product);
-                list.add(orderByNameVO);
+                QueryWrapper queryWrapper = new QueryWrapper();
+                queryWrapper.eq("user_id", id);
+                if (!orderMapper.selectList(queryWrapper).isEmpty())
+                    list.add(orderByNameVO);
             }
         }
         return list;
