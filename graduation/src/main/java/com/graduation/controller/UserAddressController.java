@@ -61,6 +61,16 @@ public class UserAddressController {
         log.info("进入修改地址接口");
         User user = userService.getById(userService.findByToken(token).getUserId());
         userAddress.setUserId(user.getId());
+        if (userAddress.getDefaultAddress() == 1) {
+            UserAddress list = userAddressService.getOne(
+                    new QueryWrapper<UserAddress>()
+                            .eq("default_address", userAddress.getDefaultAddress())
+                            .eq("user_id", userService.findByToken(token).getUserId()));
+            if (list!=null) {
+                list.setDefaultAddress(0);
+                userAddressService.updateById(list);
+            }
+        }
         if (userAddressService.updateById(userAddress))
             return ResultUtil.success(null, CodeEnum.UPDATE_SUCCESS.msg(), CodeEnum.UPDATE_SUCCESS.val());
         return ResultUtil.fail(CodeEnum.UPDATE_FAIL.val(), CodeEnum.UPDATE_FAIL.msg());
