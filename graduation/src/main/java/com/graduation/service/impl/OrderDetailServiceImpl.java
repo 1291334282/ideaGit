@@ -79,6 +79,7 @@ public class OrderDetailServiceImpl extends ServiceImpl<OrderDetailMapper, Order
                 orderByNameVO.setProduct(product);
                 QueryWrapper queryWrapper = new QueryWrapper();
                 queryWrapper.eq("user_id", id);
+                queryWrapper.eq("id",orderByNameVO.getOrderId());
                 if (!orderMapper.selectList(queryWrapper).isEmpty())
                     list.add(orderByNameVO);
             }
