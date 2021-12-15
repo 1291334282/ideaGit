@@ -19,6 +19,7 @@ public class FileUtil {
     public static String getUploadPath() {
         String path = "C:\\img";//本地用
 //        String path="/root/img";//阿里云用
+        System.out.println(path);
         return path;
     }
 
