@@ -44,6 +44,7 @@ public class ShiroConfiguration {
         shiroFilter.setFilters(filters);
         Map<String, String> filterMap = new LinkedHashMap<>();
         // anno匿名访问  auth验证
+        filterMap.put("/rabbit/**","anon");
         filterMap.put("/webjars/**", "anon");
         filterMap.put("/druid/**", "anon");
         filterMap.put("/user/login", "anon");
@@ -59,7 +60,6 @@ public class ShiroConfiguration {
         filterMap.put("/swagger-ui.html", "anon");
         filterMap.put("/swagger-resources/**", "anon");
         filterMap.put("/doc.html", "anon");
-        filterMap.put("/**","anon");
         // 除了以上路径，其他都需要权限验证
         filterMap.put("/**", "auth");
         shiroFilter.setFilterChainDefinitionMap(filterMap);

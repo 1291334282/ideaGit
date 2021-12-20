@@ -21,6 +21,11 @@ spring:
       additional-paths: src/main/java #重启目录
   freemarker:
     cache: false    #页面不加载缓存，修改即时生效
+  rabbitmq:
+    host: 42.194.221.176
+    port: 5673
+    username: guest
+    password: guest
 
 mybatis-plus:
   configuration:
