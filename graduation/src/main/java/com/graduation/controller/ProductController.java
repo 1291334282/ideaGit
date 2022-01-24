@@ -2,6 +2,7 @@ package com.graduation.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.graduation.config.Cache;
 import com.graduation.entity.ResultUtil;
 import com.graduation.service.CartService;
 import com.graduation.service.ProductCategoryService;
@@ -51,8 +52,12 @@ public class ProductController {
 
     @ApiOperation("功能：查找全部商品")
     @GetMapping("/findAllProduct")
+    @Cache(expire = 5 * 60 * 1000,name = "hot_article")
     public ResultUtil findAllProduct() {
+        long startTime = System.currentTimeMillis();
         log.info("进入查找全部商品接口");
+        long endTime = System.currentTimeMillis();    //获取结束时间
+        System.out.println("程序运行时间：" + (endTime - startTime) + "ms");    //输出程序运行时间
         return ResultUtil.success(productService.findAllProduct());
     }
 

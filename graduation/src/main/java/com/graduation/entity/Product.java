@@ -58,11 +58,11 @@ public class Product implements Serializable {
     @ApiModelProperty(value = "文件名称")
     private String fileName;
 
-    @ApiModelProperty(value = "创建时间,不用输入")
-    @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime createTime;
-    @ApiModelProperty(value = "更新时间,不用输入")
-    @TableField(fill = FieldFill.INSERT_UPDATE)
-    private LocalDateTime updateTime;
+//    @ApiModelProperty(value = "创建时间,不用输入")
+//    @TableField(fill = FieldFill.INSERT)
+//    private LocalDateTime createTime;
+//    @ApiModelProperty(value = "更新时间,不用输入")
+//    @TableField(fill = FieldFill.INSERT_UPDATE)
+//    private LocalDateTime updateTime;
 
 }
