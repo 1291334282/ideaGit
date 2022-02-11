@@ -53,7 +53,7 @@ public class RabbitMqTestController {
     @PostMapping("/test2")
     public void test2(){
         redisTemplate.opsForValue().set("test","test");
-//        System.out.println("test+"+redisTemplate.opsForValue().get("test"));
+        System.out.println("test+"+redisTemplate.opsForValue().get("test"));
     }
 
 }
