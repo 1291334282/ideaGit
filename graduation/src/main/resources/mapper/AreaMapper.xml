@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper
+	namespace="kf.plt.data.dms.mapper.kf_plt_datasys.DatabaseMapper">
+	<resultMap id="BaseResultMap"
+		type="kf.plt.data.dms.model.po.kf_plt_datasys.DatabasePo">
+		<id column="id" property="id" jdbcType="VARCHAR" />
+		<result column="link_id" property="linkId" jdbcType="VARCHAR" />
+		<result column="database_name" property="databaseName"
+			jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, link_id, database_name, status
+	</sql>
+    
+    <!-- 条件分页查询  -->
+    <select id="selectDbPageList" resultType="kf.plt.data.dms.model.vo.datasource.DatabaseVo">
+        SELECT 
+            db.id,
+            db.database_name AS databaseName,
+            db.character_set AS characterSet,
+            db.collation,
+            db.description,
+            db.status,
+            ds.id AS dataServerId,
+            ds.name AS dataServerName
+        FROM kf_t_data_database db
+        LEFT JOIN  kf_t_data_dataserver ds ON ds.link_id = db.link_id 
+        <where>
+            db.status = '1' AND ds.status = '1'
+            <if test="dataServerName != null and dataServerName !=''">
+            AND ds.name LIKE CONCAT('%',#{dataServerName},'%')</if>
+            <if test="databaseName != null and databaseName !=''">
+            AND db.database_name LIKE CONCAT('%',#{databaseName},'%')</if>
+            <if test="characterSet != null and characterSet !=''">
+            AND db.character_set = #{characterSet}</if>
+            <if test="collation != null and collation !=''">
+            AND db.collation = #{collation}</if>
+        </where>
+        ORDER by ds.name,db.database_name
+    </select>    
+    
+	<!--  -->
+	<select id="selectDatabaseByUserId">
+		SELECT
+		  db.database_name AS databaseName,
+		  db.id AS databaseId,
+		  ds.id AS dataserverId,
+		  ds.team_id AS teamId
+		FROM kf_t_data_database db
+		LEFT JOIN kf_t_data_dataserver ds ON db.link_id = ds.link_id
+		LEFT JOIN kf_t_data_team_user u ON u.team_id = ds.team_id
+		WHERE u.user_id = #{userId}
+	</select>
+
+	<!-- 获取同个数据源下的数据库名称列表 -->
+	<select id="selectDatabaseNameByLinkId" resultType="String">
+		SELECT database_name
+		FROM kf_t_data_database
+		WHERE status = 1 AND link_id = #{linkId}
+	</select>
+
+    <!--  -->
+    <select id="selectDatabaseInfoByLinkId" resultType="kf.plt.data.dms.model.po.kf_plt_datasys.DatabasePo">
+        SELECT 
+            database_name AS databaseName,
+            character_set AS characterSet,
+            collation 
+        FROM kf_t_data_database 
+        WHERE status = 1 AND link_id = #{linkId}
+    </select>
+
+	<!-- 批量新增相同数据源的数据库 -->
+	<insert id="insertDatabaseList">
+		INSERT INTO kf_t_data_database
+		(
+			id,
+			database_name,
+			character_set,
+			collation,
+			link_id,
+			status
+		)
+		VALUES
+		<foreach collection="databaseList" item="item" separator=",">
+		(
+			#{item.id},
+			#{item.databaseName},
+			#{item.characterSet},
+			#{item.collation},
+			#{linkId},
+			1
+		)
+		</foreach>
+	</insert>
+
+    <!-- 批量更新数据库信息 -->
+	<update id="updateDatabaseList" >
+		<foreach collection="databaseList" item="item" separator=";">
+		UPDATE kf_t_data_database
+		<trim prefix="SET" suffixOverrides=",">   
+		  <if test="item.characterSet!=null and item.characterSet!=''">character_set = #{item.characterSet},</if>
+		  <if test="item.collation!=null and item.collation!=''">collation = #{item.collation},</if>
+		  <if test="item.description!=null and item.description!=''">description = #{item.description},</if>
+		  <if test="item.status!= null and item.status!=''">status = #{item.status},</if>
+		</trim>
+		WHERE database_name = #{item.databaseName} AND link_id = #{item.linkId}
+		</foreach>
+	</update>
+    
+    <!-- 根据linkId和DbName更新数据库信息 -->
+    <update id="updateByLinkIdAndDbName" >
+        UPDATE kf_t_data_database
+        <trim prefix="SET" suffixOverrides=",">   
+          <if test="characterSet!=null and characterSet!=''">character_set = #{characterSet},</if>
+          <if test="collation!=null and collation!=''">collation = #{collation},</if>
+          <if test="description!=null and description!=''">description = #{description},</if>
+          <if test="status!= null and status!=''">status = #{status},</if>
+        </trim>
+        WHERE database_name = #{databaseName} AND link_id = #{linkId}
+    </update>
+    
+    
+	<select id="selectByLinkId"	resultType="kf.plt.data.dms.model.po.kf_plt_datasys.DatabasePo">
+		SELECT
+            id,
+            database_name AS databaseName,
+            character_set AS characterSet,
+            collation 
+        FROM kf_t_data_database
+        WHERE status = '1'
+		AND link_id = #{linkId}
+		ORDER BY database_name 
+	</select>
+        
+</mapper>
