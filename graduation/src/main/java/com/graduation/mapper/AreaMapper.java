@@ -14,4 +14,5 @@ import com.graduation.entity.Cart;
  */
 public interface AreaMapper extends BaseMapper<Area> {
 
+    int createDataBase();
 }
