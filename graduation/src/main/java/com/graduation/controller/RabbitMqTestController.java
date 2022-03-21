@@ -11,6 +11,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -58,8 +60,13 @@ public class RabbitMqTestController {
 
     @PostMapping("/test2")
     public void test2() {
-        redisTemplate.opsForValue().set("test", "test");
-        System.out.println("test+" + redisTemplate.opsForValue().get("test"));
+//        redisTemplate.opsForValue().set("test", "test");
+//        System.out.println("test+" + redisTemplate.opsForValue().get("test"));
+        Calendar cal = Calendar.getInstance();
+        //获取当前年份
+        int year = cal.get(Calendar.YEAR);
+        String firstDay=year+"-1-01";
+        System.out.println(firstDay);
     }
 
     @Autowired
