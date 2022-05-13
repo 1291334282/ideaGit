@@ -127,4 +127,16 @@ public class RabbitMqTestController {
         System.out.println(taskCountExecuted + "个任务已执行,总耗时：" + (end - start));
         executor.shutdown();
     }
+    private static int num = 20;
+    @GetMapping("/test1")
+//    @Lock(key = "test1")
+    public void test1() {
+        System.out.println("当前线程:" + Thread.currentThread().getName());
+        if (num == 0) {
+            System.out.println("卖完了");
+            return;
+        }
+        num--;
+        System.out.println("还剩余：" + num);
+    }
 }
