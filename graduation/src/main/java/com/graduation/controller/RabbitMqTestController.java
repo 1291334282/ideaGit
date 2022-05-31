@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.graduation.config.Sender;
 import com.graduation.config.Task;
 import com.graduation.entity.Area;
+import com.graduation.entity.Test;
+import com.graduation.handler.FuzzyQuery;
 import com.graduation.mapper.AreaMapper;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @RequestMapping("/rabbit")
 @Api(tags = "rabbitmq测试")
 @CrossOrigin
+
 public class RabbitMqTestController {
     @Autowired
     Sender sender;
@@ -138,5 +141,10 @@ public class RabbitMqTestController {
         }
         num--;
         System.out.println("还剩余：" + num);
+    }
+    @PostMapping("/ttt")
+    @FuzzyQuery
+    public String ttt(@RequestBody Test test){
+        return test.getName();
     }
 }
