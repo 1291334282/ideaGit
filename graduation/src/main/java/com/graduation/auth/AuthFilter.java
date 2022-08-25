@@ -1,12 +1,12 @@
 package com.graduation.auth;
 
 
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.graduation.entity.ResultUtil;
 import com.graduation.enums.CodeEnum;
 import com.graduation.handler.HttpContextUtil;
 import com.graduation.handler.TokenUtil;
-import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.web.filter.authc.AuthenticatingFilter;
