@@ -5,12 +5,13 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
  * <p>
- *  Mapper 接口
+ * Mapper 接口
  * </p>
  *
  * @author 叼大
  * @since 2020-12-07
  */
 public interface UserMapper extends BaseMapper<User> {
-
+    String getWangFeng();
+    User getUser();
 }
